@@ -17,10 +17,10 @@ const pool = new Pool({
 	host: Bun.env.DB_HOST,
 	port: Number(Bun.env.DB_PORT),
 	database: Bun.env.DB_NAME,
-	password: Bun.env.DB_PASSWORD
-	// ssl: {
-	//     rejectUnauthorized: true
-	// }
+	password: Bun.env.DB_PASSWORD,
+	ssl: {
+		rejectUnauthorized: true
+	}
 });
 
 const app = new Hono<{ Variables: AppVariables }>();
