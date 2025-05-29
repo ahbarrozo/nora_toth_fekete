@@ -1,0 +1,5 @@
+# deps
+.env
+bun.lock
+dist/
+node_modules/
