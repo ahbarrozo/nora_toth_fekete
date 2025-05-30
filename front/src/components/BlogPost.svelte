@@ -49,7 +49,7 @@
 	}
 </script>
 
-<div class={`flex-none ${isFirst ? 'w-full' : 'w-96 2xl:w-md'}`}>
+<div class={`flex-none ${isFirst ? 'w-full' : '2xl:w-md w-96'}`}>
 	{#if !isFirst}
 		<div class="card h-150 shadow-sm">
 			<figure>
@@ -80,12 +80,12 @@
 					<img
 						src={images[0].path}
 						alt="Foto da postage"
-						class="mr-10 h-96
-                                w-5/10 overflow-hidden rounded-lg
+						class="w-5/10 mr-10
+                                h-96 overflow-hidden rounded-lg
                                 object-cover object-top"
 					/>
 				{/if}
-				<div class="relative h-160 w-80 sm:h-96 sm:w-xl lg:w-2xl xl:w-3xl 2xl:w-5xl">
+				<div class="h-160 sm:w-xl lg:w-2xl xl:w-3xl 2xl:w-5xl relative w-80 sm:h-96">
 					<div class="absolute top-0">
 						<h1 class="text-2xl sm:text-5xl">{title}</h1>
 						<span class="text-primary sm:text-2xl">{subtitle}</span>
@@ -104,10 +104,10 @@
 
 	<dialog bind:this={modal} class="modal">
 		<div
-			class="modal-box absolute left-[2.5vw] h-[95vh] w-[95vw] max-w-[95vw] p-4 lg:static lg:w-3/4 lg:max-w-3/4"
+			class="modal-box lg:max-w-3/4 absolute left-[2.5vw] h-[95vh] w-[95vw] max-w-[95vw] p-4 lg:static lg:w-3/4"
 		>
 			<div class="flex justify-between">
-				<div class="pt-6 pl-6">
+				<div class="pl-6 pt-6">
 					<h1 class="font-bold">{title}</h1>
 					<span class="text-primary">{subtitle}</span>
 				</div>
@@ -157,8 +157,8 @@
 								<div
 									id={'slide_' + i}
 									class="carousel-item
-                                            relative
-                                            w-full scroll-mt-30
+                                            scroll-mt-30
+                                            relative w-full
                                             justify-center"
 								>
 									<img src={image.path} alt={'Foto ' + i} class="max-h-full max-w-full" />
@@ -170,9 +170,9 @@
 									{/if}
 									<div
 										class="absolute
-                                                top-1/2
-                                                right-5
                                                 left-5
+                                                right-5
+                                                top-1/2
                                                 flex
                                                 -translate-y-1/2
                                                 transform
