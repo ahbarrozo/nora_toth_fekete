@@ -1,9 +1,8 @@
 <script lang="ts">
 	import * as m from 'src/paraglide/messages';
 	import { type Readable } from 'svelte/store';
+	import { type Editor } from '@tiptap/core';
 	import { createEditor } from 'svelte-tiptap';
-	import { Editor } from '@tiptap/core';
-	import StarterKit from '@tiptap/starter-kit';
 	import { type BlogCommentProps } from '../types/BlogComment.types';
 	import type { Button } from 'src/types/TextEditor.types';
 	import { onMount } from 'svelte';
@@ -42,7 +41,11 @@
 	 *  including a callback to update the text field and all
 	 *  its buttons.
 	 */
-	onMount(() => {
+	onMount(async () => {
+		// Inconsistent SSR issues on deployment forces import on client side
+		// TODO: test v3 of tiptap
+		let { StarterKit } = await import('@tiptap/starter-kit');
+
 		editor = createEditor({
 			extensions: [StarterKit],
 			element: editorDiv,
@@ -131,7 +134,7 @@
 		</label>
 		<label
 			for="text"
-			class="input bg-base-300 flex h-100 w-auto flex-col gap-y-4 overflow-y-scroll text-xl"
+			class="input bg-base-300 h-100 flex w-auto flex-col gap-y-4 overflow-y-scroll text-xl"
 		>
 			<div class="mt-4 flex gap-x-4">
 				{#if editor}

@@ -1,5 +1,5 @@
 {
-	"name": "thiago-brisolla-site-api",
+	"name": "back",
 	"scripts": {
 		"dev": "bun run --watch src/index.ts",
 		"start": "bun run src/index.ts",
