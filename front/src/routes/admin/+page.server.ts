@@ -484,7 +484,7 @@ export const actions: Actions = {
 
             const buffer = Buffer.from(await file.arrayBuffer());
             const uploadPath = process.env.NODE_ENV === 'production' ?
-                '/apps/site/build/client/images/images' :
+                '/apps/front/build/client/images' :
                 'static/images'
             writeFileSync(`${uploadPath}/${file.name}`, buffer, "base64");
             return { success: true, data: file.name };

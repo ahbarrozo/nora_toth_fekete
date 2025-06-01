@@ -40,4 +40,4 @@ cpus = 1
 
 [[statics]]
 guest_path = '/apps/front/build/client/images'
-url_prefix = '/'
+url_prefix = '/images'
