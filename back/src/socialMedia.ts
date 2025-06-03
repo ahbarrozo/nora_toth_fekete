@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { Pool } from 'pg';
 import { AppVariables } from './types/hono.types';
 import { SocialMediaDTO } from './types/SocialMedia.type';
-import { authMiddleware } from './auth';
+import { authGuard } from './auth';
 
 const socialMedia = new Hono<{ Variables: AppVariables }>();
 
@@ -27,7 +27,7 @@ socialMedia.get('/', async (c) => {
 /**
  *  POST request to create a new social media entry.
  */
-socialMedia.post('/', authMiddleware, async (c) => {
+socialMedia.post('/', authGuard, async (c) => {
 	const pool: Pool = c.get('db');
 
 	try {
@@ -59,7 +59,7 @@ socialMedia.post('/', authMiddleware, async (c) => {
  *  check its existence, and update all the fields available at the
  *  submission form
  */
-socialMedia.put('/:id', authMiddleware, async (c) => {
+socialMedia.put('/:id', authGuard, async (c) => {
 	const pool: Pool = c.get('db');
 	const id = c.req.param('id');
 
@@ -109,7 +109,7 @@ socialMedia.put('/:id', authMiddleware, async (c) => {
  *  DELETE request to delete a social media entry based
  *  on its ID
  */
-socialMedia.delete('/:id', authMiddleware, async (c) => {
+socialMedia.delete('/:id', authGuard, async (c) => {
 	const pool: Pool = c.get('db');
 	const id = c.req.param('id');
 

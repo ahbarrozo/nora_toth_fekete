@@ -3,7 +3,7 @@ import { Pool } from 'pg';
 import { AppVariables } from './types/hono.types';
 import { Image, ImageDTO } from './types/Image.type';
 import { Work, WorkDTO } from './types/Work.type';
-import { authMiddleware } from './auth';
+import { authGuard } from './auth';
 
 const works = new Hono<{ Variables: AppVariables }>();
 
@@ -86,7 +86,7 @@ works.get('/', async (c) => {
  *  POST request to create a new work entry. It will insert the
  *  new rows at the works, work_images and images tables
  */
-works.post('/', authMiddleware, async (c) => {
+works.post('/', authGuard, async (c) => {
 	const pool: Pool = c.get('db');
 
 	try {
@@ -153,7 +153,7 @@ works.post('/', authMiddleware, async (c) => {
  *  all the fields available at the submission form, images included,
  *  if needed
  */
-works.put('/:id', authMiddleware, async (c) => {
+works.put('/:id', authGuard, async (c) => {
 	const pool: Pool = c.get('db');
 	const id = c.req.param('id');
 	const data = await c.req.formData();
@@ -266,7 +266,7 @@ works.put('/:id', authMiddleware, async (c) => {
 });
 
 // DELETE request to delete a work based on its ID
-works.delete('/:id', authMiddleware, async (c) => {
+works.delete('/:id', authGuard, async (c) => {
 	const pool: Pool = c.get('db');
 	const id = c.req.param('id');
 

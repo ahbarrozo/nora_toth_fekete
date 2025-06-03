@@ -1,5 +1,7 @@
 # deps
 .env
+.env.prod
 bun.lock
+migrate.prod.sh
 dist/
 node_modules/

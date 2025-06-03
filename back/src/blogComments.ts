@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { Pool } from 'pg';
 import { AppVariables } from './types/hono.types';
 import { BlogComment, BlogCommentDTO } from './types/BlogComment.type';
-import { authMiddleware } from './auth';
+import { authGuard } from './auth';
 
 const blogComments = new Hono<{ Variables: AppVariables }>();
 
@@ -134,7 +134,7 @@ blogComments.put('/:id', async (c) => {
     }
 });
 
-blogComments.delete('/:id', authMiddleware, async (c) => {
+blogComments.delete('/:id', authGuard, async (c) => {
     const pool: Pool = c.get('db');
     const id = c.req.param('id');
 

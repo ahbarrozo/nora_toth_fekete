@@ -3,7 +3,7 @@ import { Pool } from 'pg';
 import { AppVariables } from './types/hono.types';
 import { Image, ImageDTO } from './types/Image.type';
 import { AboutSection, AboutSectionDTO } from './types/AboutSection.type';
-import { authMiddleware } from './auth';
+import { authGuard } from './auth';
 
 const aboutSections = new Hono<{ Variables: AppVariables }>();
 
@@ -83,7 +83,7 @@ aboutSections.get('/', async (c) => {
  *  POST request to create a new about section entry. It will insert the
  *  new rows at the about_sections, about_section_images and images tables
  */
-aboutSections.post('/', authMiddleware, async (c) => {
+aboutSections.post('/', authGuard, async (c) => {
     const pool: Pool = c.get('db');
 
     try {
@@ -148,7 +148,7 @@ aboutSections.post('/', authMiddleware, async (c) => {
  *  and update all the fields available at the submission form, images 
  *  included, if needed
  */
-aboutSections.put('/:id', authMiddleware, async (c) => {
+aboutSections.put('/:id', authGuard, async (c) => {
     const pool: Pool = c.get('db');
     const id = c.req.param('id');
     const data = await c.req.formData();
@@ -261,7 +261,7 @@ aboutSections.put('/:id', authMiddleware, async (c) => {
 });
 
 // DELETE request to delete a section in bio
-aboutSections.delete('/:id', authMiddleware, async (c) => {
+aboutSections.delete('/:id', authGuard, async (c) => {
     const pool: Pool = c.get('db');
     const id = c.req.param('id');
 

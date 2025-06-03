@@ -3,7 +3,7 @@ import { Pool } from 'pg';
 import { AppVariables } from './types/hono.types';
 import { Image, ImageDTO } from './types/Image.type';
 import { BlogPost, BlogPostDTO } from './types/BlogPost.type';
-import { authMiddleware } from './auth';
+import { authGuard } from './auth';
 
 const blogPosts = new Hono<{ Variables: AppVariables }>();
 
@@ -89,7 +89,7 @@ blogPosts.get('/', async (c) => {
  *  POST request to create a new blog entry. It will insert the
  *  new rows at the blog_posts, blog_post_images and images tables
  */
-blogPosts.post('/', authMiddleware, async (c) => {
+blogPosts.post('/', authGuard, async (c) => {
     const pool: Pool = c.get('db');
 
     try {
@@ -153,7 +153,7 @@ blogPosts.post('/', authMiddleware, async (c) => {
  *  all the fields available at the submission form, images included,
  *  if needed
  */
-blogPosts.put('/:id', authMiddleware, async (c) => {
+blogPosts.put('/:id', authGuard, async (c) => {
     const pool: Pool = c.get('db');
     const id = c.req.param('id');
     const data = await c.req.formData();
@@ -266,7 +266,7 @@ blogPosts.put('/:id', authMiddleware, async (c) => {
     }
 });
 
-blogPosts.delete('/:id', authMiddleware, async (c) => {
+blogPosts.delete('/:id', authGuard, async (c) => {
     const pool: Pool = c.get('db');
     const id = c.req.param('id');
 

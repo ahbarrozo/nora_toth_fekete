@@ -1,5 +1,8 @@
 import { Hono } from 'hono';
+import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
 import { cors } from 'hono/cors';
+import { CookieStore, sessionMiddleware } from "hono-sessions";
+import { googleAuth } from '@hono/oauth-providers/google'
 import { Pool } from 'pg';
 
 import { AppVariables } from './types/hono.types';
@@ -12,6 +15,25 @@ import events from './events';
 import socialMedia from './socialMedia';
 import works from './works';
 
+const googleAuthMiddleware = googleAuth({
+	client_id: Bun.env.GOOGLE_CLIENT_ID,
+	client_secret: Bun.env.GOOGLE_CLIENT_SECRET,
+	scope: [
+		'openid',
+		'email',
+		'profile',
+		'https://www.googleapis.com/auth/calendar.events'
+	],
+	// Optional: If you want to store the refresh token
+	// access_type: 'offline', 
+	// prompt: 'consent', // Forces consent screen, useful for getting refresh token
+	redirect_uri: `${Bun.env.HOST}/auth/google/callback`, // Ensure this matches your Google Cloud Console config
+	// onError: (c, error) => {
+	//    console.error("Google OAuth Error:", error);
+	//    return c.redirect(`${APP_BASE_URL}/?oauth_error=${encodeURIComponent(error.message || 'Login failed')}`);
+	// }
+});
+
 const pool = new Pool({
 	user: Bun.env.DB_USER,
 	host: Bun.env.DB_HOST,
@@ -19,9 +41,11 @@ const pool = new Pool({
 	database: Bun.env.DB_NAME,
 	password: Bun.env.DB_PASSWORD,
 	ssl: {
-		rejectUnauthorized: true
+		rejectUnauthorized: Bun.env.ENVIRONMENT === 'production'
 	}
 });
+
+const sessionStore = new CookieStore();
 
 const app = new Hono<{ Variables: AppVariables }>();
 
@@ -30,11 +54,35 @@ app.use('*', async (c, next) => {
 	c.set('db', pool);
 	await next();
 });
+
+// Setup for cross origins and possible requests
 app.use(
 	'*',
 	cors({
 		origin: [Bun.env.ALLOWED_ORIGIN as string, 'http://localhost:5173'],
 		allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+	})
+);
+
+// Setup for session management
+app.use('*', sessionMiddleware({
+	store: sessionStore,
+	encryptionKey: Bun.env.SESSION_ENCRYPTION_KEY,
+	expireAfterSeconds: 900,
+	sessionCookieName: 'session',
+	cookieOptions: {
+		path: '/',
+		httpOnly: Bun.env.ENVIRONMENT === 'production'
+	},
+}))
+
+// OAuth2 middleware for authentication with Google ID
+app.use(
+	'/google',
+	googleAuth({
+		client_id: Bun.env.GOOGLE_ID,
+		client_secret: Bun.env.GOOGLE_SECRET,
+		scope: ['openid', 'email', 'profile'],
 	})
 );
 

@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { Pool } from 'pg';
 import { AppVariables } from './types/hono.types';
 import { ContactDTO } from './types/Contact.type';
-import { authMiddleware } from './auth';
+import { authGuard } from './auth';
 
 const contacts = new Hono<{ Variables: AppVariables }>();
 
@@ -27,7 +27,7 @@ contacts.get('/', async (c) => {
 /**
  *  POST request to create a new contact entry.
  */
-contacts.post('/', authMiddleware, async (c) => {
+contacts.post('/', authGuard, async (c) => {
 	const pool: Pool = c.get('db');
 
 	try {
@@ -62,7 +62,7 @@ contacts.post('/', authMiddleware, async (c) => {
  *  check its existence and updateall the fields available at
  *  the submission form.
  */
-contacts.put('/:id', authMiddleware, async (c) => {
+contacts.put('/:id', authGuard, async (c) => {
 	const pool: Pool = c.get('db');
 	const id = c.req.param('id');
 
@@ -114,7 +114,7 @@ contacts.put('/:id', authMiddleware, async (c) => {
 /**
  *  DELETE request to delete a contact row based on its ID
  */
-contacts.delete('/:id', authMiddleware, async (c) => {
+contacts.delete('/:id', authGuard, async (c) => {
 	const pool: Pool = c.get('db');
 	const id = c.req.param('id');
 

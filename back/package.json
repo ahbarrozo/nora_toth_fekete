@@ -9,8 +9,10 @@
 		"lint": "prettier --check . && eslint ."
 	},
 	"dependencies": {
+		"@hono/oauth-providers": "^0.8.0",
 		"@types/pg": "^8.11.11",
-		"hono": "^4.7.4",
+		"hono": "^4.7.11",
+		"hono-sessions": "^0.7.2",
 		"jsonwebtoken": "^9.0.2",
 		"pg": "^8.14.0"
 	},
