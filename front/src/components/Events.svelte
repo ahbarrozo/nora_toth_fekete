@@ -8,7 +8,7 @@
 	const listEvents = events.reduce(
 		(acc, event) => {
 			event.dates.forEach((d) => {
-				const date = new Date(d);
+				const date = new Date(d.start);
 				let locale = getLocale();
 				locale += locale === 'en' ? '-US' : '-FR';
 				const dateString = date.toLocaleDateString(locale, {

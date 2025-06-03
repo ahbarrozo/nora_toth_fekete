@@ -3,6 +3,9 @@
 	import 'src/app.css';
 	import Toaster from 'src/components/Toaster.svelte';
 	import Toolbar from 'src/components/Toolbar.svelte';
+
+	import { PUBLIC_API_ENDPOINT } from '$env/static/public';
+
 	let { children } = $props();
 
 	let authForm = $state({ username: '', password: '' });
@@ -26,19 +29,11 @@
 	}
 
 	/**
-	 *  Checks if the dialog HTML element is mounted, and if so,
-	 *  calls the showModal function. An empty form is used to
-	 *  allow for the usage of SvelteKit actions
+	 *  Attempts to access an authrized Google account, redirecting
+	 *  to the admin dashboard if successful.
 	 */
 	async function attemptAccess() {
-		const response = await fetch('?/verifyToken', {
-			method: 'POST',
-			body: new FormData()
-		});
-
-		const responseData = await response.json();
-		if (responseData.type === 'redirect') goto('/admin');
-		else if (modal) modal.showModal();
+		window.location.href = `${PUBLIC_API_ENDPOINT}auth/google`;
 	}
 </script>
 

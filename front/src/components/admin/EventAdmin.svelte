@@ -1,21 +1,35 @@
 <script lang="ts">
-	import type { EventProps } from 'src/types/Event.types';
+	import type { EventProps, EventPropsDTO } from 'src/types/Event.types';
 	import { TrashSolid } from 'svelte-awesome-icons';
 	import { onMount } from 'svelte';
 	import { toaster } from 'src/stores/toaster.store';
 	import { isEmpty } from 'src/common/dataParsing';
+	import { eventTypes } from 'src/common/constants';
 
-	let { id, dates, link, location, name, onDelete }: EventProps & { onDelete: Function } = $props();
+	let {
+		id,
+		dates,
+		link,
+		location,
+		name,
+		start,
+		stop,
+		type,
+		onDelete
+	}: EventProps & { onDelete: Function } = $props();
 	let modal: HTMLDialogElement;
 	let cally;
-	let calendar = $state(dates.join(' '));
+	let calendar = $state(dates.map((d) => d.start.slice(0, 10)).join(' '));
 	let calendarRef = $state<HTMLInputElement | null>(null);
 	let inputRef = $state<HTMLInputElement | null>(null);
 	let postFormData = $state({
 		dates,
 		link,
 		location,
-		name
+		name,
+		start,
+		stop,
+		type
 	});
 	let showCalendar = $state(false);
 
@@ -93,27 +107,30 @@
 	async function saveEvent() {
 		// Validating submission
 		if (isEmpty(postFormData.name)) {
-			toaster.show('Favor inserir um nome.', 'error');
+			toaster.show('Please include a title.', 'error');
 			return;
 		}
 
 		if (isEmpty(postFormData.location)) {
-			toaster.show('Favor inserir um local.', 'error');
+			toaster.show('Please include a location.', 'error');
 			return;
 		}
 
 		if (isEmpty(calendar)) {
-			toaster.show('Favor incluir ao menos uma data.', 'error');
+			toaster.show('Please include at least a date.', 'error');
 			return;
 		}
 
 		const eventFormData = new FormData();
-		const body: EventProps = {
+		const body: EventPropsDTO = {
 			id,
 			dates: calendar,
 			link: postFormData.link,
 			location: postFormData.location,
-			name: postFormData.name
+			name: postFormData.name,
+			start: postFormData.start,
+			stop: postFormData.stop,
+			type: postFormData.type
 		};
 
 		Object.entries(body).forEach(([k, v]) => {
@@ -133,7 +150,7 @@
 		const responseData = await response.json();
 		switch (responseData.status) {
 			case 200:
-				toaster.show('EventProps successfully updated', 'success');
+				toaster.show('Event successfully updated', 'success');
 				break;
 			case 201:
 				toaster.show('New event successfully created', 'success');
@@ -156,23 +173,36 @@
 
 <fieldset class={`fieldset bg-base-200 border-base-300 rounded-box mb-4 w-full border p-4`}>
 	<div class="flex w-full flex-row flex-wrap gap-x-4 gap-y-8">
-		<label for="name" class="input w-[20.28vw] text-xl">
+		<label for="name" class="floating-label input w-[20.28vw] text-xl">
+			<span>Title</span>
 			<input
 				type="input"
 				class="input input-lg"
 				bind:value={postFormData.name}
-				placeholder="Título"
+				placeholder="Title"
 			/>
 		</label>
-		<label for="location" class="input w-[30vw] text-xl">
+		<label for="location" class="floating-label input w-[30vw] text-xl">
+			<span>Location</span>
 			<input
 				type="input"
 				class="input input-lg"
 				bind:value={postFormData.location}
-				placeholder="Local"
+				placeholder="Location"
 			/>
 		</label>
-		<label for="link" class="input w-[28.66vw] text-xl">
+		<label for="name" class="floating-label select w-[20.28vw] text-xl">
+			<span>Type</span>
+			<select class="select select-lg" bind:value={postFormData.type} placeholder="Type">
+				{#each eventTypes as eventType}
+					<option value={eventType.name}>
+						{eventType.displayName}
+					</option>
+				{/each}
+			</select>
+		</label>
+		<label for="link" class="floating-label input w-[28.66vw] text-xl">
+			<span>Link</span>
 			<input
 				type="input"
 				class="input input-lg"
@@ -180,12 +210,12 @@
 				placeholder="Link"
 			/>
 		</label>
-		<label for="date" class="input w-full text-xl">
+		<label for="date" class="input w-[60vw] text-xl">
 			<input
 				type="input"
 				class="input input-lg"
 				value={calendar.split(' ').join(', ')}
-				placeholder="Datas"
+				placeholder="Dates"
 				bind:this={inputRef}
 				onfocus={() => (showCalendar = true)}
 			/>
@@ -225,6 +255,24 @@
 				</div>
 			{/if}
 		</label>
+		<div class="mt-[-24px]">
+			<label for="start" class="label">From</label>
+			<input
+				type="time"
+				class="input input-lg"
+				bind:value={postFormData.start}
+				placeholder="From"
+			/>
+		</div>
+		<div class="mt-[-24px]">
+			<label for="stop" class="label">To</label>
+			<input
+				type="time"
+				class="input input-lg"
+				bind:value={postFormData.stop}
+				placeholder="Until"
+			/>
+		</div>
 	</div>
 	<div class="flex justify-between">
 		<button class="btn btn-primary mt-10" onclick={saveEvent}>Save</button>

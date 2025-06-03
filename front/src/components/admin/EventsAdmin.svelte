@@ -10,7 +10,7 @@
 		name: ''
 	};
 
-	let eventsList: EventProps[] = $state(events);
+	let eventsList: EventProps[] = $state(events.filter((e) => e.type !== 'external'));
 
 	function displayNewEvent() {
 		eventsList = [...eventsList, { ...emptyEvent }];

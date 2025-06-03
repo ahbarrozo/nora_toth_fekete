@@ -2,473 +2,340 @@ import { writeFileSync } from 'fs';
 import { fail, redirect, type Actions, type ServerLoad } from '@sveltejs/kit';
 import type { ApiData, PageData } from 'src/types/PageData.types';
 
-import { API_ENDPOINT } from '$env/static/private';
+import { PUBLIC_API_ENDPOINT } from '$env/static/public';
 
 type DataTableName = keyof ApiData;
 
 export const actions: Actions = {
-    deleteAboutSection: async ({ request, cookies, fetch }) => {
+    deleteAboutSection: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
-
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
-
             const id = formData.get('id');
-            const response = await fetch(API_ENDPOINT + `about_sections/${id}`, {
+            const response = await fetch(PUBLIC_API_ENDPOINT + `about_sections/${id}`, {
                 method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
 
             const result = await response.json();
 
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
         }
     },
-    deleteWork: async ({ request, cookies, fetch }) => {
+    deleteWork: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
-
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
-
             const id = formData.get('id');
-            const response = await fetch(API_ENDPOINT + `works/${id}`, {
+            const response = await fetch(PUBLIC_API_ENDPOINT + `works/${id}`, {
                 method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
             const result = await response.json();
 
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
         }
     },
-    deleteBlogPost: async ({ request, cookies, fetch }) => {
+    deleteBlogPost: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
 
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
 
             const id = formData.get('id');
-            const response = await fetch(API_ENDPOINT + `blog_posts/${id}`, {
+            const response = await fetch(PUBLIC_API_ENDPOINT + `blog_posts/${id}`, {
                 method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
             const result = await response.json();
 
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
         }
     },
-    deleteContact: async ({ request, cookies, fetch }) => {
+    deleteContact: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
 
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
 
             const id = formData.get('id');
-            const response = await fetch(API_ENDPOINT + `contacts/${id}`, {
+            const response = await fetch(PUBLIC_API_ENDPOINT + `contacts/${id}`, {
                 method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
             const result = await response.json();
 
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
         }
     },
-    deleteEvent: async ({ request, cookies, fetch }) => {
+    deleteEvent: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
 
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
 
             const id = formData.get('id');
-            const response = await fetch(API_ENDPOINT + `events/${id}`, {
+            const response = await fetch(PUBLIC_API_ENDPOINT + `events/${id}`, {
                 method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
             const result = await response.json();
 
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
         }
     },
-    deleteSocialMedia: async ({ request, cookies, fetch }) => {
+    deleteSocialMedia: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
 
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
 
             const id = formData.get('id');
-            const response = await fetch(API_ENDPOINT + `social_media/${id}`, {
+            const response = await fetch(PUBLIC_API_ENDPOINT + `social_media/${id}`, {
                 method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
             const result = await response.json();
 
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
         }
     },
-    saveAboutSection: async ({ request, cookies, fetch }) => {
+    saveAboutSection: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
 
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
 
-            const response = await fetch(API_ENDPOINT + 'about_sections', {
+            const response = await fetch(PUBLIC_API_ENDPOINT + 'about_sections', {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
             const result = await response.json();
 
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
         }
     },
-    saveWork: async ({ request, cookies, fetch }) => {
+    saveWork: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
 
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
 
-            const response = await fetch(API_ENDPOINT + 'works', {
+            const response = await fetch(PUBLIC_API_ENDPOINT + 'works', {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
             const result = await response.json();
 
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
         }
     },
-    saveBlogPost: async ({ request, cookies, fetch }) => {
+    saveBlogPost: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
 
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
 
-            const response = await fetch(API_ENDPOINT + 'blog_posts', {
+            const response = await fetch(PUBLIC_API_ENDPOINT + 'blog_posts', {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
             const result = await response.json();
 
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
         }
     },
-    saveContact: async ({ request, cookies, fetch }) => {
+    saveContact: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
 
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
 
-            const response = await fetch(API_ENDPOINT + 'contacts', {
+            const response = await fetch(PUBLIC_API_ENDPOINT + 'contacts', {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
             const result = await response.json();
 
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
         }
     },
-    saveEvent: async ({ request, cookies, fetch }) => {
+    saveEvent: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
 
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
-            const response = await fetch(API_ENDPOINT + 'events', {
+            const response = await fetch(PUBLIC_API_ENDPOINT + 'events', {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
             const result = await response.json();
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
         }
     },
-    saveSocialMedia: async ({ request, cookies, fetch }) => {
+    saveSocialMedia: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
 
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
 
-            const response = await fetch(API_ENDPOINT + 'social_media', {
+            const response = await fetch(PUBLIC_API_ENDPOINT + 'social_media', {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
             const result = await response.json();
 
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
         }
     },
-    updateAboutSection: async ({ request, cookies, fetch }) => {
+    updateAboutSection: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
 
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
 
             const id = formData.get('id');
-            const response = await fetch(API_ENDPOINT + `about_sections/${id}`, {
+            const response = await fetch(PUBLIC_API_ENDPOINT + `about_sections/${id}`, {
                 method: 'PUT',
                 body: formData,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
             const result = await response.json();
 
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
         }
     },
-    updateWork: async ({ request, cookies, fetch }) => {
+    updateWork: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
 
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
 
             const id = formData.get('id');
-            const response = await fetch(API_ENDPOINT + `works/${id}`, {
+            const response = await fetch(PUBLIC_API_ENDPOINT + `works/${id}`, {
                 method: 'PUT',
                 body: formData,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
             const result = await response.json();
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
         }
     },
-    updateBlogPost: async ({ request, cookies, fetch }) => {
+    updateBlogPost: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
 
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
 
             const id = formData.get('id');
-            const response = await fetch(API_ENDPOINT + `blog_posts/${id}`, {
+            const response = await fetch(PUBLIC_API_ENDPOINT + `blog_posts/${id}`, {
                 method: 'PUT',
                 body: formData,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
             const result = await response.json();
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
         }
     },
-    updateContact: async ({ request, cookies, fetch }) => {
+    updateContact: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
-
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
-
             const id = formData.get('id');
-            const response = await fetch(API_ENDPOINT + `contacts/${id}`, {
+            const response = await fetch(PUBLIC_API_ENDPOINT + `contacts/${id}`, {
                 method: 'PUT',
                 body: formData,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
             const result = await response.json();
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
         }
     },
-    updateEvent: async ({ request, cookies, fetch }) => {
+    updateEvent: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
-
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
             const id = formData.get('id');
-            const response = await fetch(API_ENDPOINT + `events/${id}`, {
+            const response = await fetch(PUBLIC_API_ENDPOINT + `events/${id}`, {
                 method: 'PUT',
                 body: formData,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
             const result = await response.json();
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
         }
     },
-    updateSocialMedia: async ({ request, cookies, fetch }) => {
+    updateSocialMedia: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-            const token = cookies.get('token');
 
-            if (!token) {
-                return { success: false, error: 'Unauthorized: no token found' };
-            }
 
             const id = formData.get('id');
-            const response = await fetch(API_ENDPOINT + `social_media/${id}`, {
+            const response = await fetch(PUBLIC_API_ENDPOINT + `social_media/${id}`, {
                 method: 'PUT',
                 body: formData,
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                }
             });
             const result = await response.json();
             if (result.error)
                 // @ts-ignore
-                return fail(400, 'Invalid or expired token')
+                return fail(500, `Internal server error: ${result.error}`)
             return { success: true, data: result };
         } catch (error) {
             return fail(500, { success: false, error });
@@ -494,23 +361,15 @@ export const actions: Actions = {
     },
 };
 
-export const load: ServerLoad = async ({ cookies, fetch }): Promise<PageData> => {
-    const token = cookies.get('token');
-    if (!token) {
-        redirect(303, '/');
-    }
-
-    const formData = new FormData();
-    formData.append('token', token);
-    const response = await fetch(API_ENDPOINT + 'auth/verify_token',
+export const load: ServerLoad = async ({ fetch }): Promise<PageData> => {
+    const response = await fetch(PUBLIC_API_ENDPOINT + 'auth/verify',
         {
-            method: 'POST',
-            body: formData
+            method: 'GET',
         }
     );
     const responseData = await response.json();
 
-    if (responseData.error)
+    if (!responseData.isAuthenticated)
         redirect(303, '/');
 
     try {
@@ -524,10 +383,12 @@ export const load: ServerLoad = async ({ cookies, fetch }): Promise<PageData> =>
         ];
 
         // Create an array of promise-returning API call functions
-        const apiCalls = dataTables.map(dt => fetch(API_ENDPOINT + dt));
+        const apiCalls = dataTables.map(dt => fetch(PUBLIC_API_ENDPOINT + dt));
 
         // Wait for all promises to resolve
         const responses = await Promise.all(apiCalls);
+        const googleCalendarResponse = await fetch(PUBLIC_API_ENDPOINT + 'events/google-calendar');
+        const googleCalendar = await googleCalendarResponse.json();
 
         // Process all responses
         const results = await Promise.all(responses.map(response => response.json()));
@@ -535,6 +396,22 @@ export const load: ServerLoad = async ({ cookies, fetch }): Promise<PageData> =>
             acc[table] = results[i];
             return acc;
         }, {} as ApiData);
+
+        const lastEventId = apiData.events[apiData.events.length - 1].id!;
+        const calendarEvents = googleCalendar.events.map((e: any, i: number) => {
+            return {
+                id: lastEventId + i + 1,
+                name: e.summary,
+                dates: [
+                    {
+                        start: e.start.dateTime,
+                        stop: e.end.dateTime
+                    }
+                ],
+                type: 'external'
+            }
+        })
+        apiData['events'].push(...calendarEvents)
 
         return {
             apiData

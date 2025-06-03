@@ -1,15 +1,16 @@
 <script lang="ts">
 	import { Calendar, DayGrid, TimeGrid } from '@event-calendar/core';
 	import type { EventProps, EventsProps } from 'src/types/Event.types';
-	import EventAdmin from './EventAdmin.svelte';
 
 	const { events }: EventsProps = $props();
-	const emptyEvent: EventProps = {
-		dates: [],
-		link: '',
-		location: '',
-		name: ''
-	};
+
+	const colors = new Map<string | null, string>([
+		['class', 'oklch(45% 0.187 3.815)'],
+		['concert', 'oklch(43% 0.078 188.216)'],
+		['external', 'oklch(68% 0.169 237.323)'],
+		['workshop', 'oklch(79% 0.184 86.047)'],
+		[null, 'oklch(27% 0.006 286.033)']
+	]);
 
 	let eventsList = $derived<Array<Calendar.EventInput>>(
 		events.reduce((es: Calendar.EventInput[], e) => {
@@ -17,11 +18,11 @@
 				return {
 					...e,
 					title: e.name,
-					start: d,
-					end: d
+					start: d.start,
+					end: d.stop,
+					backgroundColor: colors.get(e.type ?? null)
 				};
 			});
-
 			es.push(...ePerDate);
 			return es;
 		}, [])
@@ -57,5 +58,8 @@
 	<!-- {#each eventsList as event (event.id)}
 		<EventAdmin {...event} onDelete={() => onDelete(event.id!)} />
 	{/each}
-	<button class="btn btn-primary w-full" onclick={displayNewEvent}>New event</button> -->
+	<button
+		class="btn btn-primary w-full"
+		onclick={() => console.log(eventsList)}>New event</button
+	> -->
 </div>
