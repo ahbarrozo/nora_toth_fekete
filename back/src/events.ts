@@ -108,7 +108,6 @@ events.put('/:id', authGuard, async (c) => {
 			stop: data.get('stop')! && data.get('stop')!.toString(), // nullable field
 			type: data.get('type')! && data.get('type')!.toString() // nullable field
 		};
-		console.log({ event })
 
 		await pool.query(
 			`
