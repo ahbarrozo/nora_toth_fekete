@@ -7,6 +7,7 @@ export interface BlogPost {
 	title: string;
 	subtitle?: string;
 	text: string;
+	type?: string;
 	images: Image[];
 	locale: string;
 }
@@ -16,5 +17,6 @@ export interface BlogPostDTO {
 	title: string;
 	subtitle?: string;
 	text: string;
+	type: string;
 	locale: string;
 }

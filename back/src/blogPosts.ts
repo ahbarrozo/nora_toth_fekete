@@ -28,7 +28,7 @@ blogPosts.get('/', async (c) => {
         const result = await pool.query(`
             SELECT 
                 bp.id, bp.date, bp.title, bp.subtitle, 
-                bp.text, bp.locale, bp.post_num,
+                bp.text, bp.type, bp.locale, bp.post_num,
                 im.id AS image_id, im.path AS image_path,
                 im.title AS image_title, im.locale AS image_locale, 
                 im.description AS image_description 
@@ -68,6 +68,7 @@ blogPosts.get('/', async (c) => {
                     text: row.text,
                     date: row.date,
                     locale: row.locale,
+                    type: row.type,
                     images: []
                 };
 
@@ -99,18 +100,19 @@ blogPosts.post('/', authGuard, async (c) => {
             title: data.get('title')!.toString(),
             subtitle: data.get('subtitle')! && data.get('subtitle')!.toString(), // nullable field
             text: data.get('text')!.toString(),
-            locale: data.get('locale')!.toString()
+            locale: data.get('locale')!.toString(),
+            type: data.get('type')! && data.get('type')!.toString() // nullable field
         };
         const images: ImageDTO[] = JSON.parse(data.get('images')!.toString());
 
         const blogPostQuery = await pool.query(`
             INSERT INTO 
-                blog_posts (title, subtitle, text, locale, post_num) 
+                blog_posts (title, subtitle, text, locale, post_num, type) 
             VALUES 
-                ($1, $2, $3, $4, $5)
+                ($1, $2, $3, $4, $5, $6)
             RETURNING 
                 id;`,
-            [blogPost.title, blogPost.subtitle, blogPost.text, blogPost.locale, blogPost.postNum]);
+            [blogPost.title, blogPost.subtitle, blogPost.text, blogPost.locale, blogPost.postNum, blogPost.type]);
         const blogPostId = blogPostQuery.rows[0].id;
         const resultImagesPromises = images.map(async (image) => {
             const resultImage = await pool.query(`
@@ -161,7 +163,8 @@ blogPosts.put('/:id', authGuard, async (c) => {
         title: data.get('title')!.toString(),
         subtitle: data.get('subtitle')! && data.get('subtitle')!.toString(), // nullable field
         text: data.get('text')!.toString(),
-        locale: data.get('locale')!.toString()
+        locale: data.get('locale')!.toString(),
+        type: data.get('type')! && data.get('type')!.toString() // nullable field
     };
     const images: ImageDTO[] = JSON.parse(data.get('images')!.toString());
 
@@ -184,10 +187,10 @@ blogPosts.put('/:id', authGuard, async (c) => {
             UPDATE 
                 blog_posts
             SET 
-                title = $1, subtitle = $2, text = $3, locale = $4
+                title = $1, subtitle = $2, text = $3, locale = $4, type = $5
             WHERE 
-                id = $5;`,
-            [blogPost.title, blogPost.subtitle, blogPost.text, blogPost.locale, id]
+                id = $6;`,
+            [blogPost.title, blogPost.subtitle, blogPost.text, blogPost.locale, blogPost.type, id]
         );
 
         const blogPostsImagesResults = await pool.query(
