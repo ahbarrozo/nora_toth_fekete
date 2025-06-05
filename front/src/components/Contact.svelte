@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { m } from 'src/paraglide/messages';
 	import type { ContactProps } from '../types/Contact.types';
 
 	import {
@@ -7,6 +8,9 @@
 		SpotifyBrands,
 		YoutubeBrands
 	} from 'svelte-awesome-icons';
+
+	let checkClasses = $state(false);
+	let checkEvents = $state(false);
 
 	function getIcon(name: string) {
 		switch (name) {
@@ -49,8 +53,17 @@
 		{/each}
 	</div>
 	<div>
-		<h2 class="pb-4 text-2xl">Subscribe to newsletter</h2>
+		<h2 class="pb-4 text-2xl">{m.subscribe_newsletter()}</h2>
 		<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4 sm:w-sm">
+			<legend class="fieldset-legend">Options</legend>
+			<label class="label mb-4">
+				<input type="checkbox" checked={checkClasses} class="checkbox" />
+				{m.blog_subscription()}
+			</label>
+			<label class="label mb-8">
+				<input type="checkbox" checked={checkEvents} class="checkbox" />
+				{m.events_subscription()}
+			</label>
 			<label class="input validator w-auto text-xl">
 				<svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
 					><g
@@ -67,16 +80,16 @@
 					type="input"
 					class="input input-lg"
 					required
-					placeholder="Nome"
+					placeholder={m.name()}
 					pattern="[A-Za-z][A-Za-z0-9\-]*"
 					minlength="3"
 					maxlength="30"
 					title="Only letters, numbers or dash"
 				/>
 			</label>
-			<div class="validator-hint hidden">O nome deve ter entre 3 e 30 caracteres</div>
+			<div class="validator-hint hidden">{m.form_limit_name()}</div>
 
-			<label for="mail" class="input validator w-auto text-xl">
+			<label for="mail" class="input validator mb-8 w-auto text-xl">
 				<svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
 					><g
 						stroke-linejoin="round"
@@ -91,8 +104,8 @@
 				>
 				<input type="email" class="input input-lg" placeholder="E-mail" required />
 			</label>
-			<div class="validator-hint hidden">Insira um email válido</div>
-			<button class="btn">Enviar</button>
+			<div class="validator-hint hidden">{m.form_valid_email()}</div>
+			<button class="btn btn-primary">{m.send()}</button>
 		</fieldset>
 	</div>
 </div>

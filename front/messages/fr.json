@@ -2,10 +2,21 @@
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 	"hello_world": "Hello, {name} from fr!",
 	"about": "À PROPOS",
-	"events": "ÉVÉNEMENTS",
+	"events": "Événements",
 	"works": "MUSIQUE/VIDÉOS",
 	"see_more": "Voir plus",
 	"send": "Envoyer",
 	"comment_save": "Commentaire sauvegardé !",
-	"comments": "Commentaires"
+	"comments": "Commentaires",
+	"events_menu": "ÉVÉNEMENTS",
+	"music_theory": "Théorie musicale",
+	"personal": "Personnelle",
+	"other": "Autre",
+	"download_files": "TÉLÉCHARGER FICHIERS",
+	"form_limit_name": "Le nom doit avoir entre 3 et 30 caractères",
+	"form_valid_email": "Veuillez saisir un adresse mail valide",
+	"subscribe_newsletter": "Abbonnez-vous aux newsletter",
+	"blog_subscription": "Tenez-moi au courant des nouveaux contenus dans le site",
+	"events_subscription": "Tenez-moi au courant des prochains événements",
+	"name": "Nom"
 }
