@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type Image } from 'src/types/Image.types';
+	import { type Document } from 'src/types/Document.types';
 	import { TrashSolid } from 'svelte-awesome-icons';
 
 	let {
@@ -10,20 +10,16 @@
 		locale,
 		onDelete,
 		onUpdate
-	}: Image & { onDelete: Function; onUpdate: Function } = $props();
+	}: Document & { onDelete: Function; onUpdate: Function } = $props();
 
-	let imageThumbnail = $state(path ?? '');
-	let uploadedImage = $state();
+	let uploadedDocument = $state();
 
 	function handleFileChange(event: Event) {
 		const file = (event.target as HTMLInputElement).files?.[0];
 
 		if (file) {
 			path = file.name;
-			uploadedImage = file;
-
-			// Create a local URL for preview
-			imageThumbnail = URL.createObjectURL(file);
+			uploadedDocument = file;
 			uploadToServer(file);
 		}
 	}
@@ -32,16 +28,16 @@
 	 *  in file is correct (i.e. /images/)
 	 */
 	function parsePath(filePath: string) {
-		return filePath.slice(0, 9) === '/images/' ? filePath : '/images/' + filePath;
+		return filePath.slice(0, 9) === '/documents/' ? filePath : '/documents/' + filePath;
 	}
 
 	// Function to upload file to server
 	async function uploadToServer(file: File) {
 		try {
 			const formData = new FormData();
-			formData.append('image', file);
+			formData.append('document', file);
 
-			const response = await fetch('?/uploadImage', {
+			const response = await fetch('?/uploadDocument', {
 				method: 'POST',
 				body: formData
 			});
@@ -78,7 +74,7 @@
 		/>
 	</label>
 	<div class="preview flex flex-row items-center">
-		{#if path && !imageThumbnail}
+		{#if path}
 			<span class="badge badge-primary truncate">{path.replace('/images/', '')}</span>
 		{/if}
 		<input
@@ -87,9 +83,6 @@
 			accept="image/*"
 			onchange={handleFileChange}
 		/>
-		{#if imageThumbnail}
-			<img src={imageThumbnail} alt="Preview" class="max-h-36 object-scale-down" />
-		{/if}
 	</div>
 	<div class="flex justify-end">
 		<button class="btn btn-xs btn-outline btn-error mt-10 text-white" onclick={() => onDelete()}>

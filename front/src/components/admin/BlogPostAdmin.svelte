@@ -12,19 +12,23 @@
 	import { PUBLIC_LOCALE } from '$env/static/public';
 	import ImageUploader from '../ImageUploader.svelte';
 	import type { Image } from 'src/types/Image.types';
-	import { locales } from 'src/common/constants';
+	import { blogPostTypes, locales } from 'src/common/constants';
 	import type { Button } from 'src/types/TextEditor.types';
 	import Audio from 'src/lib/AudioExtension';
+	import DocumentUploader from '../DocumentUploader.svelte';
+	import { type Document } from 'src/types/Document.types';
 
 	let {
 		id,
 		date,
+		documents,
 		postNum,
 		images,
 		locale,
 		subtitle,
 		text,
 		title,
+		type,
 		isFirst,
 		onDelete
 	}: BlogPostProps & { onDelete: Function } = $props();
@@ -44,7 +48,9 @@
 		locale,
 		subtitle,
 		title,
-		images
+		type,
+		images,
+		documents
 	});
 
 	/**
@@ -123,6 +129,16 @@
 		];
 	});
 
+	function addDocument() {
+		const emptyDocument = {
+			title: '',
+			description: '',
+			path: '',
+			locale: postForm.locale
+		};
+		postForm.documents.push(emptyDocument);
+	}
+
 	function addImage() {
 		const emptyImage = {
 			title: '',
@@ -166,6 +182,19 @@
 	 */
 	function deleteImage(index: number) {
 		postForm.images = postForm.images?.slice(0, index).concat(postForm.images?.slice(index + 1));
+	}
+
+	/**
+	 *  Function to be called upon an onDelete event from
+	 *  DocumentUploader is triggered on the child component.
+	 *  It filters the sections by ID for deleted sections
+	 *
+	 *  @param index : number index of the deleted section
+	 */
+	function deleteDocument(index: number) {
+		postForm.documents = postForm.documents
+			?.slice(0, index)
+			.concat(postForm.documents?.slice(index + 1));
 	}
 
 	/**
@@ -237,6 +266,7 @@
 			locale: postForm.locale,
 			text,
 			title: postForm.title,
+			type: postForm.type,
 			subtitle: postForm.subtitle
 		};
 
@@ -249,6 +279,7 @@
 		 *  formData converting empty arrays into empty strings
 		 */
 		blogPostFormData.append('images', JSON.stringify(postForm.images));
+		blogPostFormData.append('documents', JSON.stringify(postForm.documents));
 
 		const response = !body.id
 			? await fetch('?/saveBlogPost', {
@@ -293,20 +324,44 @@
 	function updateImage(i: number, image: Image) {
 		if (postForm.images && postForm.images.length > i) postForm.images[i] = { ...image };
 	}
+
+	/**
+	 *  Updates the list of documents by updating the document at the
+	 *  index i of the array
+	 *
+	 *  @param i : number - index in the array of documents
+	 *  @param document : Document - document object to replace in index i
+	 */
+	function updateDocument(i: number, document: Document) {
+		if (postForm.documents && postForm.documents.length > i)
+			postForm.documents[i] = { ...document };
+	}
 </script>
 
 <fieldset
 	class={`fieldset ${isFirst ? 'w-full' : 'w-[3/10]'} bg-base-200 border-base-300 rounded-box border p-4`}
 >
-	<label for="name" class="select w-[20.28vw] text-xl">
-		<select class="select select-lg" bind:value={postForm.locale} placeholder="Language">
-			{#each locales as locale}
-				<option value={locale.name}>
-					{locale.displayName}
-				</option>
-			{/each}
-		</select>
-	</label>
+	<div class="flex flex-row gap-6">
+		<label for="name" class="select w-[15%] text-xl">
+			<select class="select select-lg" bind:value={postForm.locale} placeholder="Language">
+				{#each locales as locale}
+					<option value={locale.name}>
+						{locale.displayName}
+					</option>
+				{/each}
+			</select>
+		</label>
+		<label for="name" class="floating-label select w-[40%] text-xl">
+			<span>Type</span>
+			<select class="select select-lg" bind:value={postForm.type} placeholder="Type">
+				{#each blogPostTypes as blogPostType}
+					<option value={blogPostType.name}>
+						{blogPostType.displayName}
+					</option>
+				{/each}
+			</select>
+		</label>
+	</div>
 	<h2 class="text-xl">{dateString}</h2>
 	<label for="title" class="input w-auto text-xl">
 		<input type="input" class="input input-lg" placeholder="Título" bind:value={postForm.title} />
@@ -361,6 +416,22 @@
 		<button class="btn btn-primary btn-outline mt-10" onclick={addImage}>
 			<PlusSolid />
 			New image
+		</button>
+	</div>
+	<h3 class="m-4 text-3xl">Documents</h3>
+	{#if postForm.documents && postForm.documents.length > 0}
+		{#each postForm.documents as document, i}
+			<DocumentUploader
+				{...document}
+				onDelete={() => deleteDocument(i)}
+				onUpdate={(updatedDocument: Document) => updateDocument(i, updatedDocument)}
+			/>
+		{/each}
+	{/if}
+	<div class="w-full">
+		<button class="btn btn-primary btn-outline mt-10" onclick={addDocument}>
+			<PlusSolid />
+			New document
 		</button>
 	</div>
 	<div class="flex justify-between">

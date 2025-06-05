@@ -4,14 +4,17 @@
 	import { type BlogPostProps } from 'src/types/BlogPost.types';
 	import BlogComments from './BlogComments.svelte';
 	import type { BlogCommentProps } from 'src/types/BlogComment.types';
+	import { blogPostColors, blogPostTypes } from 'src/common/constants';
 
 	const {
 		id,
 		date,
+		documents,
 		images,
 		subtitle,
 		text,
 		title,
+		type,
 		isFirst,
 		comments
 	}: BlogPostProps & { comments: BlogCommentProps[] } = $props();
@@ -23,6 +26,26 @@
 		year: 'numeric'
 	});
 	const dateString = $derived(dateFormat.format(new Date(date)));
+
+	function downloadDocument(path: string) {
+		try {
+			validateFilepath(path);
+
+			const anchor = document.createElement('a');
+			anchor.href = path;
+			anchor.target = '_blank';
+			anchor.rel = 'noopener noreferrer'; // Security best practice
+
+			document.body.appendChild(anchor);
+			anchor.click();
+			document.body.removeChild(anchor);
+
+			return true;
+		} catch (error) {
+			console.error('Error opening file:', error);
+			return false;
+		}
+	}
 
 	/**
 	 *  Function to be called upon an onDelete event is
@@ -42,9 +65,35 @@
 		if (modal) modal.showModal();
 	}
 
+	function typeColor(postType: string | null) {
+		return blogPostColors.get(postType);
+	}
+
+	function typeLabel(postType: string | null) {
+		if (postType)
+			// @ts-ignore
+			return m[postType]();
+		return m.other();
+	}
+
 	function truncatedHTML(limit: number = 150) {
 		if (text.length <= 150) return text;
 		return text.slice(0, limit) + '...';
+	}
+
+	function validateFilepath(path: string) {
+		if (path.includes('../') || path.includes('..\\')) {
+			throw new Error('Invalid filepath: directory traversal detected');
+		}
+
+		const allowedExtensions = ['.pdf', '.jpg', '.png', '.docx', '.xlsx'];
+		const extension = path.toLowerCase().substring(path.lastIndexOf('.'));
+
+		if (!allowedExtensions.includes(extension)) {
+			throw new Error('File type not allowed');
+		}
+
+		return true;
 	}
 </script>
 
@@ -62,12 +111,15 @@
 			</figure>
 			<div class="card-body">
 				<h2 class="card-title text-3xl">{title}</h2>
-				<span class="text-primary text-xl">{subtitle}</span>
+				<div class="flex flex-row items-center justify-between">
+					<span class="text-primary text-xl">{subtitle}</span>
+					<div class="badge" style={`background-color: ${typeColor(type)}`}>{typeLabel(type)}</div>
+				</div>
 				<p class="mb-4 text-lg">
 					{@html truncatedHTML()}
 				</p>
 				<div class="card-actions justify-between">
-					<button class="btn btn-primary" onclick={showModal}>More</button>
+					<button class="btn btn-primary" onclick={showModal}>{m.see_more()}</button>
 					<span class="text-primary mt-4 text-sm">{dateString}</span>
 				</div>
 			</div>
@@ -87,7 +139,12 @@
 				<div class="relative h-160 w-80 sm:h-96 sm:w-xl lg:w-2xl xl:w-3xl 2xl:w-5xl">
 					<div class="absolute top-0">
 						<h1 class="text-2xl sm:text-5xl">{title}</h1>
-						<span class="text-primary sm:text-2xl">{subtitle}</span>
+						<div class="flex flex-row justify-between">
+							<span class="text-primary sm:text-2xl">{subtitle}</span>
+							<div class="badge" style={`background-color: ${typeColor(type)}`}>
+								{typeLabel(type)}
+							</div>
+						</div>
 						<div class="truncate py-4 text-xl">
 							{@html truncatedHTML(150)}
 						</div>
@@ -193,6 +250,18 @@
 				{/if}
 				{@html text}
 			</div>
+			{#if documents && documents.length > 0}
+				<h2>{m.download_files()}</h2>
+				<div class="flex flex-row flex-wrap">
+					{#each documents as document, d (d)}
+						<button
+							aria-label={`Download ${document.title}`}
+							onclick={() => downloadDocument(document.path)}
+							class="btn btn-primary mt-6">{document.title}</button
+						>
+					{/each}
+				</div>
+			{/if}
 			<BlogComments blogComments={comments} blogId={id!} {onSubmit} />
 		</div>
 		<form method="dialog" class="modal-backdrop">
