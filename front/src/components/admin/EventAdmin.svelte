@@ -191,7 +191,7 @@
 				placeholder="Location"
 			/>
 		</label>
-		<label for="name" class="floating-label select w-[20.28vw] text-xl">
+		<label for="type" class="floating-label select w-[20.28vw] text-xl">
 			<span>Type</span>
 			<select class="select select-lg" bind:value={postFormData.type} placeholder="Type">
 				{#each eventTypes as eventType}

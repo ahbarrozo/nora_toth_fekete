@@ -68,7 +68,7 @@
 						onclick={() => scrollToSection('events')}
 						class="anchor font-questrial tracking-widest"
 					>
-						{m.events()}
+						{m.events_menu()}
 					</button>
 				</li>
 				<li>
@@ -94,7 +94,7 @@
 			>{m.works()}</button
 		>
 		<button onclick={() => scrollToSection('events')} class="anchor font-questrial tracking-widest"
-			>{m.events()}</button
+			>{m.events_menu()}</button
 		>
 		<button onclick={() => scrollToSection('blog')} class="anchor font-questrial tracking-widest"
 			>BLOG</button

@@ -29,7 +29,7 @@
 		<div class="tab-content bg-base-100 border-base-300 p-6">
 			<WorksAdmin works={apiData.works} />
 		</div>
-		<input type="radio" name="my_tabs_3" class="tab" aria-label={m.events()} />
+		<input type="radio" name="my_tabs_3" class="tab" aria-label={m.events_menu()} />
 		<div class="tab-content bg-base-100 border-base-300 p-6">
 			<EventsAdmin events={apiData.events} />
 		</div>

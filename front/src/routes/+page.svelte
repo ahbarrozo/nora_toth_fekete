@@ -24,7 +24,7 @@
 	<h2 id="works" class="text-4xl">{m.works()}</h2>
 	<Works works={apiData.works} />
 	<div class="divider"></div>
-	<h2 id="events" class="text-4xl">{m.events()}</h2>
+	<h2 id="events" class="text-4xl">{m.events_menu()}</h2>
 	<Events events={apiData.events} />
 	<div class="divider"></div>
 	<h2 id="blog" class="text-4xl">BLOG</h2>
