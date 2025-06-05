@@ -341,6 +341,24 @@ export const actions: Actions = {
             return fail(500, { success: false, error });
         }
     },
+    uploadDocument: async ({ request }) => {
+        try {
+            const formData = await request.formData();
+            const file = formData.get('document');
+            if (!(file instanceof Object) || !file.name) {
+                return fail(400, { missing: true });
+            }
+
+            const buffer = Buffer.from(await file.arrayBuffer());
+            const uploadPath = process.env.NODE_ENV === 'production' ?
+                '/apps/front/build/client/documents' :
+                'static/documents'
+            writeFileSync(`${uploadPath}/${file.name}`, buffer, "base64");
+            return { success: true, data: file.name };
+        } catch (error) {
+            return fail(500, { success: false, error })
+        }
+    },
     uploadImage: async ({ request }) => {
         try {
             const formData = await request.formData();
