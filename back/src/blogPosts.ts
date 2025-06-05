@@ -4,6 +4,7 @@ import { AppVariables } from './types/hono.types';
 import { Image, ImageDTO } from './types/Image.type';
 import { BlogPost, BlogPostDTO } from './types/BlogPost.type';
 import { authGuard } from './auth';
+import { Document, DocumentDTO } from './types/Document.types';
 
 const blogPosts = new Hono<{ Variables: AppVariables }>();
 
@@ -17,8 +18,11 @@ const blogPosts = new Hono<{ Variables: AppVariables }>();
 blogPosts.get('/', async (c) => {
     const pool: Pool = c.get('db');
     const query = c.req.query('locale');
-    const andClause: string = query
+    const andClauseImage: string = query
         ? `AND im.locale = '${query}' `
+        : '';
+    const andClauseDocument: string = query
+        ? `AND d.locale = '${query}' `
         : '';
     const whereClause: string = query
         ? `WHERE bp.locale = '${query}'`
@@ -31,13 +35,20 @@ blogPosts.get('/', async (c) => {
                 bp.text, bp.type, bp.locale, bp.post_num,
                 im.id AS image_id, im.path AS image_path,
                 im.title AS image_title, im.locale AS image_locale, 
-                im.description AS image_description 
+                im.description AS image_description,  
+                d.id AS document_id, d.path AS document_path,
+                d.title AS document_title, d.locale AS document_locale, 
+                d.description AS document_description 
             FROM 
                 blog_posts bp
             LEFT JOIN
                 blog_posts_images bpi ON bp.id = bpi.blog_post_id
             LEFT JOIN
-                images im ON bpi.image_id = im.id ${andClause}
+                images im ON bpi.image_id = im.id ${andClauseImage}
+            LEFT JOIN
+                blog_posts_documents bpd ON bp.id = bpd.blog_post_id
+            LEFT JOIN
+                documents d ON bpd.document_id = d.id ${andClauseDocument}
             ${whereClause} 
             ORDER BY
                 bp.date
@@ -54,11 +65,21 @@ blogPosts.get('/', async (c) => {
                     locale: row.image_locale
                 }
                 : null;
+            const document: Document | null = row.document_id
+                ? {
+                    id: row.document_id,
+                    description: row.document_description,
+                    path: row.document_path,
+                    title: row.document_title,
+                    locale: row.document_locale
+                }
+                : null;
 
             const existingBlogPost: BlogPost = rows.find((r: BlogPost) => r.id === row.id);
 
             if (existingBlogPost) {
                 if (image) existingBlogPost.images.push(image);
+                if (document) existingBlogPost.documents.push(document);
             } else {
                 const blogPost: BlogPost = {
                     id: row.id,
@@ -69,10 +90,12 @@ blogPosts.get('/', async (c) => {
                     date: row.date,
                     locale: row.locale,
                     type: row.type,
-                    images: []
+                    images: [],
+                    documents: []
                 };
 
                 if (image) blogPost.images.push(image);
+                if (document) blogPost.documents.push(document);
 
                 rows.push(blogPost);
             }
@@ -88,7 +111,7 @@ blogPosts.get('/', async (c) => {
 
 /**
  *  POST request to create a new blog entry. It will insert the
- *  new rows at the blog_posts, blog_post_images and images tables
+ *  new rows at the blog_posts, blog_posts_images and images tables
  */
 blogPosts.post('/', authGuard, async (c) => {
     const pool: Pool = c.get('db');
@@ -103,6 +126,7 @@ blogPosts.post('/', authGuard, async (c) => {
             locale: data.get('locale')!.toString(),
             type: data.get('type')! && data.get('type')!.toString() // nullable field
         };
+        const documents: DocumentDTO[] = JSON.parse(data.get('documents')!.toString());
         const images: ImageDTO[] = JSON.parse(data.get('images')!.toString());
 
         const blogPostQuery = await pool.query(`
@@ -114,6 +138,8 @@ blogPosts.post('/', authGuard, async (c) => {
                 id;`,
             [blogPost.title, blogPost.subtitle, blogPost.text, blogPost.locale, blogPost.postNum, blogPost.type]);
         const blogPostId = blogPostQuery.rows[0].id;
+
+        // Saving images
         const resultImagesPromises = images.map(async (image) => {
             const resultImage = await pool.query(`
                 INSERT INTO 
@@ -142,6 +168,35 @@ blogPosts.post('/', authGuard, async (c) => {
             })
         );
 
+        // Saving documents
+        const resultDocumentsPromises = documents.map(async (doc) => {
+            const resultDocument = await pool.query(`
+                INSERT INTO 
+                    documents (path, description, title, locale)
+                VALUES 
+                    ($1, $2, $3, $4)
+                RETURNING 
+                    id;`,
+                [doc.path, doc.description, doc.title, doc.locale]
+            );
+
+            return resultDocument.rows[0].id;
+        });
+
+        const resultDocuments = await Promise.all(resultDocumentsPromises);
+
+        await Promise.all(
+            resultDocuments.map(async (docId) => {
+                await pool.query(`
+                    INSERT INTO 
+                        blog_posts_documents (blog_post_id, document_id)
+                    VALUES 
+                        ($1, $2);`,
+                    [blogPostId, docId]
+                );
+            })
+        );
+
         return c.json(resultImages, 201);
     } catch (error) {
         console.error('Database error: ', error);
@@ -166,6 +221,7 @@ blogPosts.put('/:id', authGuard, async (c) => {
         locale: data.get('locale')!.toString(),
         type: data.get('type')! && data.get('type')!.toString() // nullable field
     };
+    const documents: DocumentDTO[] = JSON.parse(data.get('documents')!.toString());
     const images: ImageDTO[] = JSON.parse(data.get('images')!.toString());
 
     try {
@@ -193,6 +249,9 @@ blogPosts.put('/:id', authGuard, async (c) => {
             [blogPost.title, blogPost.subtitle, blogPost.text, blogPost.locale, blogPost.type, id]
         );
 
+        /**
+         *   Creating images
+         */
         const blogPostsImagesResults = await pool.query(
             `
             SELECT 
@@ -242,7 +301,7 @@ blogPosts.put('/:id', authGuard, async (c) => {
 
                     await pool.query(`
                         INSERT INTO 
-                            blog_post_images (blog_post_id, image_id) 
+                            blog_posts_images (blog_post_id, image_id) 
                         VALUES
                             ($1, $2);`,
                         [id, result.rows[0].id]
@@ -256,6 +315,78 @@ blogPosts.put('/:id', authGuard, async (c) => {
                         WHERE 
                             id = $5;`,
                         [image.path, image.description, image.title, image.locale, image.id]
+                    );
+                }
+
+            })
+        );
+
+        /**
+         *  Creating documents
+         */
+        const blogPostsDocumentsResults = await pool.query(
+            `
+            SELECT 
+                bpd.document_id, bpd.blog_post_id, 
+                d.id, d.path, d.description, d.title 
+            FROM 
+                blog_posts_documents bpd
+            LEFT JOIN 
+                documents d ON d.id = bpd.document_id
+            WHERE 
+                bpd.blog_post_id = $1;`,
+            [id]
+        );
+
+        // separating between documents to be deleted and upserted
+        const documentsToDelete = blogPostsDocumentsResults.rows.filter(
+            (doc) => !documents.map((d) => d.id).includes(doc.image_id)
+        );
+        const documentsToUpsert = documents.filter(
+            (doc) => !doc.id || !documentsToDelete.map((d) => d.id).includes(doc.id)
+        );
+
+        await Promise.all(
+            documentsToDelete.map(async (doc) => {
+                await pool.query(`
+                    DELETE FROM 
+                        blog_posts_documents 
+                    WHERE 
+                        blog_post_id = $1 AND document_id = $2`,
+                    [id, doc.id]);
+            })
+        );
+
+        // Check among images to insert if for no given ID. Else, update
+        await Promise.all(
+            documentsToUpsert.map(async (doc) => {
+                if (!doc.id) {
+                    const result = await pool.query(`
+                        INSERT INTO 
+                            documents (path, description, title, locale)
+                        VALUES 
+                            ($1, $2, $3, $4)
+                        RETURNING 
+                            id;`,
+                        [doc.path, doc.description, doc.title, doc.locale]
+                    );
+
+                    await pool.query(`
+                        INSERT INTO 
+                            blog_posts_documents (blog_post_id, document_id) 
+                        VALUES
+                            ($1, $2);`,
+                        [id, result.rows[0].id]
+                    );
+                } else {
+                    await pool.query(`
+                        UPDATE 
+                            documents 
+                        SET 
+                            path = $1, description = $2, title = $3, locale = $4   
+                        WHERE 
+                            id = $5;`,
+                        [doc.path, doc.description, doc.title, doc.locale, doc.id]
                     );
                 }
 
@@ -303,6 +434,27 @@ blogPosts.delete('/:id', authGuard, async (c) => {
             await pool.query(`
                 DELETE FROM 
                     blog_posts_images 
+                WHERE 
+                    blog_post_id = $1`,
+                [id]
+            );
+        }
+
+        const checkBlogPostDocuments = await pool.query(`
+            SELECT 
+                blog_post_id 
+            FROM 
+                blog_posts_documents 
+            WHERE 
+                blog_post_id = $1;`,
+            [id]
+        );
+
+
+        if (checkBlogPostDocuments.rows.length > 0) {
+            await pool.query(`
+                DELETE FROM 
+                    blog_posts_documents 
                 WHERE 
                     blog_post_id = $1`,
                 [id]

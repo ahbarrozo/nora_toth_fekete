@@ -1,3 +1,4 @@
+import { Document } from './Document.types';
 import { Image } from './Image.type';
 
 export interface BlogPost {
@@ -9,6 +10,7 @@ export interface BlogPost {
 	text: string;
 	type?: string;
 	images: Image[];
+	documents: Document[];
 	locale: string;
 }
 
