@@ -72,6 +72,10 @@ button:hover,
     transition: color 0.125s;
 }
 
+.badge {
+    color: white;
+}
+
 .btn-active {
     background: var(--color-primary);
     color: white;
