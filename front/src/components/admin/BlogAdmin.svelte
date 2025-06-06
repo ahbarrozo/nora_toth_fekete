@@ -3,6 +3,7 @@
 	import BlogPostAdmin from './BlogPostAdmin.svelte';
 	import type { Image } from 'src/types/Image.types';
 	import { locales } from 'src/common/constants';
+	import type { Document } from 'src/types/Document.types';
 
 	interface BlogProps {
 		blogPosts: BlogPostProps[];
@@ -13,12 +14,14 @@
 	const { blogPosts }: BlogProps = $props();
 	const emptyPost: BlogPostProps = {
 		date: new Date().toISOString(),
+		documents: [] as Document[],
 		images: [] as Image[],
 		isFirst: true,
 		locale: 'en',
 		subtitle: '',
 		title: '',
-		text: ''
+		text: '',
+		type: null
 	};
 
 	let posts = $state(blogPosts);
@@ -33,10 +36,9 @@
 			const postsEN = posts.filter((s) => s.locale === 'en');
 			const postsFR = posts.filter((s) => s.locale === 'fr');
 
-			postsEN.forEach((p: BlogPostProps, i) => (p.postNum = i + 1));
-			postsFR.forEach((p: BlogPostProps, i) => (p.postNum = i + 1));
-
-			posts = [...postsEN, ...postsFR].sort((sa, sb) => sa.postNum! - sb.postNum!);
+			postsEN.forEach((p: BlogPostProps, i) => (p.postNum = p.postNum ?? postsEN.length));
+			postsFR.forEach((p: BlogPostProps, i) => (p.postNum = p.postNum ?? postsFR.length));
+			posts = [...postsEN, ...postsFR].sort((sa, sb) => sb.postNum! - sa.postNum!);
 		}
 	});
 
@@ -91,7 +93,7 @@
 
 <div class="mb-10 flex flex-wrap justify-center gap-x-8 gap-y-4">
 	<button class="btn btn-primary w-full" onclick={displayNewPost}>New post</button>
-	{#each displayedPosts as post, i (i)}
+	{#each displayedPosts as post, i (post.date)}
 		<BlogPostAdmin {...post} onDelete={() => onDelete(post.id!)} />
 		{#if post.postNum && showDuplicateButton(post.postNum)}
 			<button class="btn btn-primary w-full" onclick={() => duplicatePost(post.postNum!)}
