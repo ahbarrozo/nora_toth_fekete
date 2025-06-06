@@ -1,5 +1,6 @@
 # deps
 .env
+.env.dev
 .env.prod
 bun.lock
 migrate.prod.sh
