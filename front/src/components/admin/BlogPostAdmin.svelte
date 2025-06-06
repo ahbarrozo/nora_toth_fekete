@@ -2,9 +2,6 @@
 	import { onMount } from 'svelte';
 	import { type Readable } from 'svelte/store';
 	import { createEditor } from 'svelte-tiptap';
-	import { Editor } from '@tiptap/core';
-	import StarterKit from '@tiptap/starter-kit';
-	import Youtube from '@tiptap/extension-youtube';
 	import { PlusSolid, TrashSolid } from 'svelte-awesome-icons';
 
 	import { toaster } from 'src/stores/toaster.store';
@@ -14,7 +11,6 @@
 	import type { Image } from 'src/types/Image.types';
 	import { blogPostTypes, locales } from 'src/common/constants';
 	import type { Button } from 'src/types/TextEditor.types';
-	import Audio from 'src/lib/AudioExtension';
 	import DocumentUploader from '../DocumentUploader.svelte';
 	import { type Document } from 'src/types/Document.types';
 
@@ -40,7 +36,7 @@
 	});
 	const dateString = $derived(dateFormat.format(new Date(date)));
 
-	let editor = $state() as Readable<Editor>;
+	let editor = $state() as Readable<any>;
 	let editorDiv: HTMLElement;
 	let modal: HTMLDialogElement;
 	let menuItems: Button[] = $state([]);
@@ -58,8 +54,13 @@
 	 *  including a callback to update the text field and all
 	 *  its buttons.
 	 */
-	onMount(() => {
+	onMount(async () => {
+		let Audio = await import('src/lib/AudioExtension');
+		let { StarterKit } = await import('@tiptap/starter-kit');
+		let { Youtube } = await import('@tiptap/extension-youtube');
+
 		editor = createEditor({
+			//@ts-ignore
 			extensions: [StarterKit, Audio, Youtube],
 			element: editorDiv,
 			content: text,
@@ -338,9 +339,7 @@
 	}
 </script>
 
-<fieldset
-	class={`fieldset ${isFirst ? 'w-full' : 'w-[3/10]'} bg-base-200 border-base-300 rounded-box border p-4`}
->
+<fieldset class={`fieldset bg-base-200 border-base-300 rounded-box w-full border p-4`}>
 	<div class="flex flex-row gap-6">
 		<label for="name" class="select w-[15%] text-xl">
 			<select class="select select-lg" bind:value={postForm.locale} placeholder="Language">
@@ -376,7 +375,7 @@
 	</label>
 	<label
 		for="text"
-		class="input bg-base-300 flex h-100 w-auto flex-col gap-y-4 overflow-y-scroll text-xl"
+		class="input bg-base-300 h-100 flex w-auto flex-col gap-y-4 overflow-y-scroll text-xl"
 	>
 		<div class="mt-4 flex gap-x-4">
 			{#if editor}

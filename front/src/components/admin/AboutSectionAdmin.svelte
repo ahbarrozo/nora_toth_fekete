@@ -3,7 +3,6 @@
 	import { type Readable } from 'svelte/store';
 	import { createEditor } from 'svelte-tiptap';
 	import { Editor } from '@tiptap/core';
-	import StarterKit from '@tiptap/starter-kit';
 
 	import type { AboutSection } from 'src/types/About.types';
 	import { PlusSolid, TrashSolid } from 'svelte-awesome-icons';
@@ -30,7 +29,9 @@
 	 *  including a callback to update the text field and all
 	 *  its buttons.
 	 */
-	onMount(() => {
+	onMount(async () => {
+		let { StarterKit } = await import('@tiptap/starter-kit');
+
 		editor = createEditor({
 			extensions: [StarterKit],
 			element: editorDiv,
@@ -228,7 +229,7 @@
 	</label>
 	<label
 		for="text"
-		class="input bg-base-300 flex h-100 w-auto flex-col gap-y-4 overflow-y-scroll text-xl"
+		class="input bg-base-300 h-100 flex w-auto flex-col gap-y-4 overflow-y-scroll text-xl"
 	>
 		<div class="mt-4 flex gap-x-4">
 			{#if editor}
