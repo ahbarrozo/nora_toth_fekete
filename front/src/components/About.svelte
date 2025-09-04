@@ -12,9 +12,9 @@
 					src={section.images[0].path}
 					alt="Foto da biografia"
 					class={`${i % 2 == 0 ? 'float-left' : 'float-right'} 
-                        m-5
-                        mr-10
-                        max-h-1/2 max-w-2/5
+                        max-h-1/2
+                        max-w-2/5
+                        m-5 mr-10
                         overflow-hidden`}
 				/>
 			{/if}
