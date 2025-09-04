@@ -75,12 +75,12 @@
 	</label>
 	<div class="preview flex flex-row items-center">
 		{#if path}
-			<span class="badge badge-primary truncate">{path.replace('/images/', '')}</span>
+			<span class="badge badge-primary truncate">{path.replace('/documents/', '')}</span>
 		{/if}
 		<input
 			type="file"
 			class="file-input file-input-ghost"
-			accept="image/*"
+			accept=".pdf, .pptx, .docx, .xslx"
 			onchange={handleFileChange}
 		/>
 	</div>
