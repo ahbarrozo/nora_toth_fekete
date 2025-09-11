@@ -72,6 +72,10 @@ button:hover,
     transition: color 0.125s;
 }
 
+.app {
+    background-color: var(--color-base-300);
+}
+
 .badge {
     color: white;
 }
@@ -81,9 +85,27 @@ button:hover,
     color: white;
 }
 
+.btn-circle {
+    border-color: transparent;
+    color: var(--color-primary) !important;
+}
+
+.btn-circle:hover {
+    border-color: transparent;
+    color: var(--color-accent-content) !important;
+}
+
 .btn {
     /* background: var(--color-primary); */
     color: white;
+}
+
+.btn-outline {
+    color: var(--color-primary) !important;
+}
+
+.btn-outline:hover {
+    color: white !important;
 }
 
 .btn-primary {
@@ -93,6 +115,10 @@ button:hover,
 
 .btn-primary:hover {
     /* background: var(--color-primary); */
+    color: var(--color-accent);
+}
+
+.btn-square:hover {
     color: var(--color-accent);
 }
 
