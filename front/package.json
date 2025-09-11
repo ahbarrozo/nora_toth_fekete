@@ -57,6 +57,7 @@
 		"@tiptap/pm": "^2.11.5",
 		"@tiptap/starter-kit": "^2.11.5",
 		"cally": "^0.8.0",
+		"media-chrome": "^4.13.1",
 		"svelte-tiptap": "^2.1.0"
 	}
 }
