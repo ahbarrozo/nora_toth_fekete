@@ -4,11 +4,14 @@
 	import { type BlogPostProps } from 'src/types/BlogPost.types';
 	import BlogComments from './BlogComments.svelte';
 	import type { BlogCommentProps } from 'src/types/BlogComment.types';
-	import { blogPostColors, blogPostTypes } from 'src/common/constants';
+	import { blogPostColors } from 'src/common/constants';
+	import 'media-chrome';
+	import AudioPlayer from './AudioPlayer.svelte';
 
 	const {
 		id,
 		date,
+		audios,
 		documents,
 		images,
 		subtitle,
@@ -97,7 +100,7 @@
 	}
 </script>
 
-<div class={`flex-none ${isFirst ? 'w-full' : '2xl:w-md w-96'}`}>
+<div class={`flex-none ${isFirst ? 'w-full' : 'w-96 2xl:w-md'}`}>
 	{#if !isFirst}
 		<div class="card h-150 shadow-sm">
 			<figure>
@@ -128,15 +131,16 @@
 		<div class="hero">
 			<div class="hero-content max-w-fit flex-col lg:flex-row">
 				{#if images && images.length > 0}
+					<!-- svelte-ignore a11y_img_redundant_alt -->
 					<img
 						src={images[0].path}
-						alt="Foto da postage"
-						class="w-5/10 mr-10
-                                h-96 overflow-hidden rounded-lg
+						alt="Post image"
+						class="mr-10 h-96
+                                w-5/10 overflow-hidden rounded-lg
                                 object-cover object-top"
 					/>
 				{/if}
-				<div class="h-160 sm:w-xl lg:w-2xl xl:w-3xl 2xl:w-5xl relative w-80 sm:h-96">
+				<div class="relative h-160 w-80 sm:h-96 sm:w-xl lg:w-2xl xl:w-3xl 2xl:w-5xl">
 					<div class="absolute top-0">
 						<h1 class="text-2xl sm:text-5xl">{title}</h1>
 						<div class="flex flex-row justify-between">
@@ -160,10 +164,10 @@
 
 	<dialog bind:this={modal} class="modal">
 		<div
-			class="modal-box lg:max-w-3/4 absolute left-[2.5vw] h-[95vh] w-[95vw] max-w-[95vw] p-4 lg:static lg:w-3/4"
+			class="modal-box absolute left-[2.5vw] h-[95vh] w-[95vw] max-w-[95vw] p-4 px-8 lg:static lg:w-3/4 lg:max-w-3/4"
 		>
 			<div class="flex justify-between">
-				<div class="pl-6 pt-6">
+				<div class="pt-6 pl-6">
 					<h1 class="font-bold">{title}</h1>
 					<span class="">{subtitle}</span>
 				</div>
@@ -213,8 +217,8 @@
 								<div
 									id={'slide_' + i}
 									class="carousel-item
-                                            scroll-mt-30
-                                            relative w-full
+                                            relative
+                                            w-full scroll-mt-30
                                             justify-center"
 								>
 									<img src={image.path} alt={'Foto ' + i} class="max-h-full max-w-full" />
@@ -226,9 +230,9 @@
 									{/if}
 									<div
 										class="absolute
-                                                left-5
-                                                right-5
                                                 top-1/2
+                                                right-5
+                                                left-5
                                                 flex
                                                 -translate-y-1/2
                                                 transform
@@ -250,6 +254,20 @@
 				{/if}
 				{@html text}
 			</div>
+			{#if audios && audios.length > 0}
+				<div class="mt-4">
+					<h2>AUDIOS</h2>
+					<div class="flex flex-row flex-wrap">
+						{#each audios as audio, d (d)}
+							<div class="flex flex-col flex-wrap">
+								<span class=" mb-2 text-xl">{audio.title}</span>
+								<p class="mb-4 text-lg">{audio.description}</p>
+								<AudioPlayer {audio} />
+							</div>
+						{/each}
+					</div>
+				</div>
+			{/if}
 			{#if documents && documents.length > 0}
 				<h2>{m.download_files()}</h2>
 				<div class="flex flex-row flex-wrap">
@@ -262,7 +280,10 @@
 					{/each}
 				</div>
 			{/if}
-			<BlogComments blogComments={comments} blogId={id!} {onSubmit} />
+			<div class="mt-8">
+				<h2>{m.leave_a_comment()}</h2>
+				<BlogComments blogComments={comments} blogId={id!} {onSubmit} />
+			</div>
 		</div>
 		<form method="dialog" class="modal-backdrop">
 			<button aria-label="Fechar">close</button>

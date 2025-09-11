@@ -4,6 +4,7 @@
 	import type { Image } from 'src/types/Image.types';
 	import { locales } from 'src/common/constants';
 	import type { Document } from 'src/types/Document.types';
+	import type { Audio } from 'src/types/Audio.types';
 
 	interface BlogProps {
 		blogPosts: BlogPostProps[];
@@ -14,6 +15,7 @@
 	const { blogPosts }: BlogProps = $props();
 	const emptyPost: BlogPostProps = {
 		date: new Date().toISOString(),
+		audios: [] as Audio[],
 		documents: [] as Document[],
 		images: [] as Image[],
 		isFirst: true,

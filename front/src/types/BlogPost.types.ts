@@ -1,3 +1,4 @@
+import type { Audio } from "./Audio.types";
 import type { Document } from "./Document.types";
 import type { Image } from "./Image.types";
 
@@ -11,6 +12,7 @@ export interface BlogPostProps {
     text: string;
     type: string | null;
     images: Image[];
+    audios: Audio[];
     documents: Document[];
     isFirst?: boolean;
 }

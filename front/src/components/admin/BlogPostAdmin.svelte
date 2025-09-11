@@ -11,11 +11,14 @@
 	import type { Image } from 'src/types/Image.types';
 	import { blogPostTypes, locales } from 'src/common/constants';
 	import type { Button } from 'src/types/TextEditor.types';
+	import AudioUploader from '../AudioUploader.svelte';
 	import DocumentUploader from '../DocumentUploader.svelte';
+	import { type Audio } from 'src/types/Audio.types';
 	import { type Document } from 'src/types/Document.types';
 
 	let {
 		id,
+		audios,
 		date,
 		documents,
 		postNum,
@@ -46,6 +49,7 @@
 		title,
 		type,
 		images,
+		audios,
 		documents
 	});
 
@@ -130,6 +134,16 @@
 		];
 	});
 
+	function addAudio() {
+		const emptyAudio = {
+			title: '',
+			description: '',
+			path: '',
+			locale: postForm.locale
+		};
+		postForm.audios.push(emptyAudio);
+	}
+
 	function addDocument() {
 		const emptyDocument = {
 			title: '',
@@ -183,6 +197,17 @@
 	 */
 	function deleteImage(index: number) {
 		postForm.images = postForm.images?.slice(0, index).concat(postForm.images?.slice(index + 1));
+	}
+
+	/**
+	 *  Function to be called upon an onDelete event from
+	 *  AudioUploader is triggered on the child component.
+	 *  It filters the sections by ID for deleted sections
+	 *
+	 *  @param index : number index of the deleted section
+	 */
+	function deleteAudio(index: number) {
+		postForm.audios = postForm.audios?.slice(0, index).concat(postForm.audios?.slice(index + 1));
 	}
 
 	/**
@@ -279,6 +304,7 @@
 		 *  JSON stringify the array, to prevent issues with
 		 *  formData converting empty arrays into empty strings
 		 */
+		blogPostFormData.append('audios', JSON.stringify(postForm.audios));
 		blogPostFormData.append('images', JSON.stringify(postForm.images));
 		blogPostFormData.append('documents', JSON.stringify(postForm.documents));
 
@@ -324,6 +350,17 @@
 	 */
 	function updateImage(i: number, image: Image) {
 		if (postForm.images && postForm.images.length > i) postForm.images[i] = { ...image };
+	}
+
+	/**
+	 *  Updates the list of audios by updating the audio at the
+	 *  index i of the array
+	 *
+	 *  @param i : number - index in the array of audios
+	 *  @param audio : Audio - audio object to replace in index i
+	 */
+	function updateAudio(i: number, audio: Audio) {
+		if (postForm.audios && postForm.audios.length > i) postForm.audios[i] = { ...audio };
 	}
 
 	/**
@@ -375,7 +412,7 @@
 	</label>
 	<label
 		for="text"
-		class="input bg-base-300 h-100 flex w-auto flex-col gap-y-4 overflow-y-scroll text-xl"
+		class="input bg-base-300 flex h-100 w-auto flex-col gap-y-4 overflow-y-scroll text-xl"
 	>
 		<div class="mt-4 flex gap-x-4">
 			{#if editor}
@@ -412,9 +449,25 @@
 		{/each}
 	{/if}
 	<div class="w-full">
-		<button class="btn btn-primary btn-outline mt-10" onclick={addImage}>
+		<button class="btn btn-primary btn-outline" onclick={addImage}>
 			<PlusSolid />
 			New image
+		</button>
+	</div>
+	<h3 class="m-4 text-3xl">Audios</h3>
+	{#if postForm.audios && postForm.audios.length > 0}
+		{#each postForm.audios as audio, i}
+			<AudioUploader
+				{...audio}
+				onDelete={() => deleteAudio(i)}
+				onUpdate={(updatedAudio: Audio) => updateAudio(i, updatedAudio)}
+			/>
+		{/each}
+	{/if}
+	<div class="w-full">
+		<button class="btn btn-primary btn-outline" onclick={addAudio}>
+			<PlusSolid />
+			New audio
 		</button>
 	</div>
 	<h3 class="m-4 text-3xl">Documents</h3>
@@ -428,17 +481,17 @@
 		{/each}
 	{/if}
 	<div class="w-full">
-		<button class="btn btn-primary btn-outline mt-10" onclick={addDocument}>
+		<button class="btn btn-primary btn-outline" onclick={addDocument}>
 			<PlusSolid />
 			New document
 		</button>
 	</div>
-	<div class="flex justify-between">
-		<button class="btn btn-primary mt-10" onclick={savePost}>Save</button>
+	<div class="mt-4 flex justify-between">
+		<button class="btn btn-primary" onclick={savePost}>Save Post</button>
 		{#if !isFirst}
-			<button class="btn btn-error mt-10 text-white" onclick={showModal}>
+			<button class="btn btn-error text-white" onclick={showModal}>
 				<TrashSolid />
-				Remove
+				Remove Post
 			</button>
 		{/if}
 	</div>
