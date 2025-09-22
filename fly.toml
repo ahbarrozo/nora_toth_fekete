@@ -10,7 +10,7 @@ primary_region = 'cdg'
 
 [[mounts]]
 source = 'nora_toth_fekete'
-destination = '/apps/front/build/client/images'
+destination = '/apps/front/build/client/static'
 
 [http_service]
 internal_port = 5173
@@ -30,7 +30,7 @@ protocol = 'tcp'
 internal_port = 3000
 
 [[services.ports]]
-port = 8000
+port = 3000
 handlers = ['tls', 'http']
 
 [[vm]]
@@ -39,5 +39,5 @@ cpu_kind = 'shared'
 cpus = 1
 
 [[statics]]
-guest_path = '/apps/front/build/client/images'
-url_prefix = '/images'
+guest_path = '/apps/front/build/client/static'
+url_prefix = '/'
