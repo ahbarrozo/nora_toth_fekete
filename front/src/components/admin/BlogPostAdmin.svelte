@@ -60,12 +60,13 @@
 	 */
 	onMount(async () => {
 		let Audio = await import('src/lib/AudioExtension');
+		let { Image } = await import('@tiptap/extension-image');
 		let { StarterKit } = await import('@tiptap/starter-kit');
 		let { Youtube } = await import('@tiptap/extension-youtube');
 
 		editor = createEditor({
 			//@ts-ignore
-			extensions: [StarterKit, Audio, Youtube],
+			extensions: [StarterKit, Image, Youtube],
 			element: editorDiv,
 			content: text,
 			onUpdate: ({ editor }) => {
@@ -78,60 +79,63 @@
 			}
 		});
 
-		// Function to check if a formatting option is active
-		const isActive = (name: string, attrs = {}) => $editor.isActive(name, attrs);
+		editor.subscribe(($editor) => {
+			if ($editor) {
+				const isActive = (name: string, attrs = {}) => $editor.isActive(name, attrs);
 
-		menuItems = [
-			{
-				active: () => isActive('heading', { level: 1 }),
-				command: () => $editor.chain().focus().toggleHeading({ level: 1 }).run(),
-				content: 'H1',
-				name: 'heading-1',
-				type: 'block'
-			},
-			{
-				active: () => isActive('heading', { level: 2 }),
-				command: () => $editor.chain().focus().toggleHeading({ level: 2 }).run(),
-				content: 'H2',
-				name: 'heading-2',
-				type: 'block'
-			},
-			{
-				active: () => isActive('paragraph'),
-				command: () => $editor.chain().focus().setParagraph().run(),
-				content: 'P',
-				name: 'paragraph',
-				type: 'block'
-			},
-			{
-				active: () => isActive('bold'),
-				command: () => $editor.chain().focus().toggleBold().run(),
-				content: 'B',
-				name: 'bold',
-				type: 'inline'
-			},
-			{
-				active: () => isActive('italic'),
-				command: () => $editor.chain().focus().toggleItalic().run(),
-				content: 'I',
-				name: 'italic',
-				type: 'inline'
-			},
-			{
-				active: () => false, // Audio is inserted, not toggled
-				command: () => insertAudio(),
-				content: '🎵',
-				name: 'audio',
-				type: 'block'
-			},
-			{
-				active: () => false, // Audio is inserted, not toggled
-				command: () => insertYoutubeVideo(),
-				content: '📺',
-				name: 'audio',
-				type: 'block'
+				menuItems = [
+					{
+						active: () => isActive('heading', { level: 1 }),
+						command: () => $editor.chain().focus().toggleHeading({ level: 1 }).run(),
+						content: 'H1',
+						name: 'heading-1',
+						type: 'block'
+					},
+					{
+						active: () => isActive('heading', { level: 2 }),
+						command: () => $editor.chain().focus().toggleHeading({ level: 2 }).run(),
+						content: 'H2',
+						name: 'heading-2',
+						type: 'block'
+					},
+					{
+						active: () => isActive('paragraph'),
+						command: () => $editor.chain().focus().setParagraph().run(),
+						content: 'P',
+						name: 'paragraph',
+						type: 'block'
+					},
+					{
+						active: () => isActive('bold'),
+						command: () => $editor.chain().focus().toggleBold().run(),
+						content: 'B',
+						name: 'bold',
+						type: 'inline'
+					},
+					{
+						active: () => isActive('italic'),
+						command: () => $editor.chain().focus().toggleItalic().run(),
+						content: 'I',
+						name: 'italic',
+						type: 'inline'
+					},
+					{
+						active: () => false,
+						command: () => insertImage(),
+						content: '🎵',
+						name: 'image',
+						type: 'block'
+					},
+					{
+						active: () => false, // Audio is inserted, not toggled
+						command: () => insertYoutubeVideo(),
+						content: '📺',
+						name: 'video',
+						type: 'block'
+					}
+				];
 			}
-		];
+		});
 	});
 
 	function addAudio() {
@@ -224,31 +228,44 @@
 	}
 
 	/**
-	 * Shows a prompt to get audio URL and inserts audio element
+	 * Shows a prompt to upload an image and include it in the text
 	 */
-	function insertAudio() {
-		const url = prompt('Enter audio URL:');
-		if (url && $editor) {
-			$editor
-				.chain()
-				.focus()
-				.insertContent({
-					type: 'audio',
-					attrs: {
-						src: url,
-						controls: true,
-						autoplay: false,
-						loop: false
-					}
-				})
-				.run();
+	async function insertImage() {
+		const input = document.createElement('input');
+		input.type = 'file';
+		input.accept = 'image/*';
+		input.multiple = false;
 
-			return true;
-		}
-		return false;
+		input.oncancel = () => input.remove();
+		input.onchange = async (e: Event) => {
+			// @ts-ignore
+			const file = e.target?.files?.[0];
+
+			console.log(file);
+			await uploadToServer(file);
+
+			if (file && editor) {
+				$editor
+					.chain()
+					.focus()
+					.insertContent({
+						type: 'image',
+						attrs: {
+							src: `images/${file.name}`,
+							alt: file.name
+						}
+					})
+					.run();
+			}
+
+			input.remove();
+		};
+
+		input.click();
+		return true;
 	}
 
-	const insertYoutubeVideo = () => {
+	function insertYoutubeVideo() {
 		const url = prompt('Enter YouTube URL: ');
 		const width = 640;
 		const height = 480;
@@ -262,7 +279,7 @@
 		}
 
 		return false;
-	};
+	}
 
 	/**
 	 *  Calls the POST or PUT API request for blog posts, depending
@@ -373,6 +390,21 @@
 	function updateDocument(i: number, document: Document) {
 		if (postForm.documents && postForm.documents.length > i)
 			postForm.documents[i] = { ...document };
+	}
+
+	// Function to upload file to server
+	async function uploadToServer(file: File) {
+		try {
+			const formData = new FormData();
+			formData.append('image', file);
+
+			const response = await fetch('?/uploadImage', {
+				method: 'POST',
+				body: formData
+			});
+		} catch (error) {
+			console.error('Error uploading file:', error);
+		}
 	}
 </script>
 

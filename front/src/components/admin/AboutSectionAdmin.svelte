@@ -46,46 +46,47 @@
 			}
 		});
 
-		// Function to check if a formatting option is active
-		const isActive = (name: string, attrs = {}) => $editor.isActive(name, attrs);
+		editor.subscribe(($editor) => {
+			const isActive = (name: string, attrs = {}) => $editor.isActive(name, attrs);
 
-		menuItems = [
-			{
-				active: () => isActive('heading', { level: 1 }),
-				command: () => $editor.chain().focus().toggleHeading({ level: 1 }).run(),
-				content: 'H1',
-				name: 'heading-1',
-				type: 'block'
-			},
-			{
-				active: () => isActive('heading', { level: 2 }),
-				command: () => $editor.chain().focus().toggleHeading({ level: 2 }).run(),
-				content: 'H2',
-				name: 'heading-2',
-				type: 'block'
-			},
-			{
-				active: () => isActive('paragraph'),
-				command: () => $editor.chain().focus().setParagraph().run(),
-				content: 'P',
-				name: 'paragraph',
-				type: 'block'
-			},
-			{
-				active: () => isActive('bold'),
-				command: () => $editor.chain().focus().toggleBold().run(),
-				content: 'B',
-				name: 'bold',
-				type: 'inline'
-			},
-			{
-				active: () => isActive('italic'),
-				command: () => $editor.chain().focus().toggleItalic().run(),
-				content: 'I',
-				name: 'italic',
-				type: 'inline'
-			}
-		];
+			menuItems = [
+				{
+					active: () => isActive('heading', { level: 1 }),
+					command: () => $editor.chain().focus().toggleHeading({ level: 1 }).run(),
+					content: 'H1',
+					name: 'heading-1',
+					type: 'block'
+				},
+				{
+					active: () => isActive('heading', { level: 2 }),
+					command: () => $editor.chain().focus().toggleHeading({ level: 2 }).run(),
+					content: 'H2',
+					name: 'heading-2',
+					type: 'block'
+				},
+				{
+					active: () => isActive('paragraph'),
+					command: () => $editor.chain().focus().setParagraph().run(),
+					content: 'P',
+					name: 'paragraph',
+					type: 'block'
+				},
+				{
+					active: () => isActive('bold'),
+					command: () => $editor.chain().focus().toggleBold().run(),
+					content: 'B',
+					name: 'bold',
+					type: 'inline'
+				},
+				{
+					active: () => isActive('italic'),
+					command: () => $editor.chain().focus().toggleItalic().run(),
+					content: 'I',
+					name: 'italic',
+					type: 'inline'
+				}
+			];
+		});
 	});
 
 	/**
@@ -229,7 +230,7 @@
 	</label>
 	<label
 		for="text"
-		class="input bg-base-300 h-100 flex w-auto flex-col gap-y-4 overflow-y-scroll text-xl"
+		class="input bg-base-300 flex h-100 w-auto flex-col gap-y-4 overflow-y-scroll text-xl"
 	>
 		<div class="mt-4 flex gap-x-4">
 			{#if editor}
