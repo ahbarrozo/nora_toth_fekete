@@ -7,6 +7,7 @@
 	import { blogPostColors } from 'src/common/constants';
 	import 'media-chrome';
 	import AudioPlayer from './AudioPlayer.svelte';
+	import { orderByDate } from 'src/common/dataParsing';
 
 	const {
 		id,
@@ -21,6 +22,9 @@
 		isFirst,
 		comments
 	}: BlogPostProps & { comments: BlogCommentProps[] } = $props();
+
+	let blogComments: BlogCommentProps[] = $state(orderByDate(comments, 'date'));
+
 	let modal: HTMLDialogElement;
 
 	const dateFormat = new Intl.DateTimeFormat(PUBLIC_LOCALE, {
@@ -57,7 +61,8 @@
 	 *
 	 */
 	function onSubmit(comment: BlogCommentProps) {
-		if (modal) modal.close();
+		comment.date = new Date().toISOString();
+		blogComments.push(comment);
 	}
 
 	/**
@@ -80,8 +85,9 @@
 	}
 
 	function truncatedHTML(limit: number = 150) {
-		if (text.length <= 150) return text;
-		return text.slice(0, limit) + '...';
+		const truncatedHTML = text.replace(/<[^>]*>/g, '');
+		if (truncatedHTML.length <= 150) return truncatedHTML;
+		return truncatedHTML.slice(0, limit) + '...';
 	}
 
 	function validateFilepath(path: string) {
@@ -282,7 +288,7 @@
 			{/if}
 			<div class="mt-8">
 				<h2>{m.leave_a_comment()}</h2>
-				<BlogComments blogComments={comments} blogId={id!} {onSubmit} />
+				<BlogComments {blogComments} blogId={id!} {onSubmit} />
 			</div>
 		</div>
 		<form method="dialog" class="modal-backdrop">
