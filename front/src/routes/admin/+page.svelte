@@ -8,6 +8,7 @@
 	import WorksAdmin from 'src/components/admin/WorksAdmin.svelte';
 	import type { PageData } from 'src/types/PageData.types';
 	import Schedule from 'src/components/admin/Schedule.svelte';
+	import EmailAdmin from 'src/components/admin/EmailAdmin.svelte';
 
 	const { data } = $props<{ data: PageData }>();
 	const { apiData } = data;
@@ -40,6 +41,10 @@
 		<input type="radio" name="my_tabs_3" class="tab" aria-label="CONTACT" />
 		<div class="tab-content bg-base-100 border-base-300 p-6">
 			<ContactsAdmin contacts={apiData.contacts} socialMedia={apiData.social_media} />
+		</div>
+		<input type="radio" name="my_tabs_3" class="tab" aria-label="E-MAIL" />
+		<div class="tab-content bg-base-100 border-base-300 p-6">
+			<EmailAdmin />
 		</div>
 	</div>
 </main>

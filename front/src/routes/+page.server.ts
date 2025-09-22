@@ -43,6 +43,22 @@ export const actions: Actions = {
             return fail(500, { success: false, error });
         }
     },
+    subscribe: async ({ request, fetch }) => {
+        try {
+            const formData = await request.formData();
+            const response = await fetch(PUBLIC_API_ENDPOINT + `emails`, {
+                method: 'POST',
+                body: formData,
+            });
+            console.log({ formData })
+            console.log(response)
+            const result = await response.json();
+
+            return { success: true, data: result };
+        } catch (error) {
+            return fail(500, { success: false, error });
+        }
+    },
     // verifyToken: async ({ cookies, fetch }) => {
     //     const response = await fetch(PUBLIC_API_ENDPOINT + 'auth/google',
     //         {

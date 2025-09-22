@@ -160,7 +160,6 @@ export const actions: Actions = {
         try {
             const formData = await request.formData();
 
-
             const response = await fetch(PUBLIC_API_ENDPOINT + 'blog_posts', {
                 method: 'POST',
                 body: formData,
@@ -178,7 +177,6 @@ export const actions: Actions = {
     saveContact: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-
 
             const response = await fetch(PUBLIC_API_ENDPOINT + 'contacts', {
                 method: 'POST',
@@ -217,6 +215,25 @@ export const actions: Actions = {
 
 
             const response = await fetch(PUBLIC_API_ENDPOINT + 'social_media', {
+                method: 'POST',
+                body: formData,
+            });
+            const result = await response.json();
+
+            if (result.error)
+                // @ts-ignore
+                return fail(500, `Internal server error: ${result.error}`)
+            return { success: true, data: result };
+        } catch (error) {
+            return fail(500, { success: false, error });
+        }
+    },
+    sendEmail: async ({ request, fetch }) => {
+        try {
+            const formData = await request.formData();
+
+
+            const response = await fetch(PUBLIC_API_ENDPOINT + 'emails/send_email', {
                 method: 'POST',
                 body: formData,
             });
@@ -341,6 +358,24 @@ export const actions: Actions = {
             return fail(500, { success: false, error });
         }
     },
+    uploadAudio: async ({ request }) => {
+        try {
+            const formData = await request.formData();
+            const file = formData.get('audio');
+            if (!(file instanceof Object) || !file.name) {
+                return fail(400, { missing: true });
+            }
+
+            const buffer = Buffer.from(await file.arrayBuffer());
+            const uploadPath = process.env.NODE_ENV === 'production' ?
+                '/apps/front/build/client/static/audios' :
+                'static/audios'
+            writeFileSync(`${uploadPath}/${file.name}`, buffer, "base64");
+            return { success: true, data: file.name };
+        } catch (error) {
+            return fail(500, { success: false, error })
+        }
+    },
     uploadDocument: async ({ request }) => {
         try {
             const formData = await request.formData();
@@ -351,7 +386,7 @@ export const actions: Actions = {
 
             const buffer = Buffer.from(await file.arrayBuffer());
             const uploadPath = process.env.NODE_ENV === 'production' ?
-                '/apps/front/build/client/documents' :
+                '/apps/front/build/client/static/documents' :
                 'static/documents'
             writeFileSync(`${uploadPath}/${file.name}`, buffer, "base64");
             return { success: true, data: file.name };
@@ -369,7 +404,7 @@ export const actions: Actions = {
 
             const buffer = Buffer.from(await file.arrayBuffer());
             const uploadPath = process.env.NODE_ENV === 'production' ?
-                '/apps/front/build/client/images' :
+                '/apps/front/build/client/static/images' :
                 'static/images'
             writeFileSync(`${uploadPath}/${file.name}`, buffer, "base64");
             return { success: true, data: file.name };
@@ -416,19 +451,20 @@ export const load: ServerLoad = async ({ fetch }): Promise<PageData> => {
         }, {} as ApiData);
 
         const lastEventId = apiData.events[apiData.events.length - 1].id!;
-        const calendarEvents = googleCalendar.events.map((e: any, i: number) => {
-            return {
-                id: lastEventId + i + 1,
-                name: e.summary,
-                dates: [
-                    {
-                        start: e.start.dateTime,
-                        stop: e.end.dateTime
-                    }
-                ],
-                type: 'external'
-            }
-        })
+        const calendarEvents = googleCalendar.events ?
+            googleCalendar.events.map((e: any, i: number) => {
+                return {
+                    id: lastEventId + i + 1,
+                    name: e.summary,
+                    dates: [
+                        {
+                            start: e.start.dateTime,
+                            stop: e.end.dateTime
+                        }
+                    ],
+                    type: 'external'
+                }
+            }) : [];
         apiData['events'].push(...calendarEvents)
 
         return {

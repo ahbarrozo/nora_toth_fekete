@@ -1,5 +1,4 @@
 import { Hono } from 'hono';
-import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
 import { cors } from 'hono/cors';
 import { CookieStore, sessionMiddleware } from "hono-sessions";
 import { googleAuth } from '@hono/oauth-providers/google'
@@ -11,6 +10,7 @@ import auth from './auth';
 import blogPosts from './blogPosts';
 import blogComments from './blogComments';
 import contacts from './contacts';
+import emails from './emails';
 import events from './events';
 import socialMedia from './socialMedia';
 import works from './works';
@@ -91,6 +91,7 @@ app.route('/auth', auth);
 app.route('/blog_posts', blogPosts);
 app.route('/blog_comments', blogComments);
 app.route('/contacts', contacts);
+app.route('/emails', emails);
 app.route('/events', events);
 app.route('/social_media', socialMedia);
 app.route('/works', works);

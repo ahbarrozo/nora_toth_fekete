@@ -7,7 +7,7 @@
 	"see_more": "See more",
 	"send": "Send",
 	"comment_save": "Comment saved!",
-	"comments": "Comments",
+	"comments": "COMMENTS",
 	"events_menu": "EVENTS",
 	"music_theory": "Music theory",
 	"personal": "Personal",
@@ -18,5 +18,8 @@
 	"subscribe_newsletter": "Subscribe to newsletter",
 	"blog_subscription": "I'd like to be informed when new posts are created",
 	"events_subscription": "I'd like to be informed when new events are available",
-	"name": "Name"
+	"name": "Name",
+	"leave_a_comment": "LEAVE A COMMENT",
+	"privacy_policy": "Privacy policy",
+	"read_privacy_policy": "Read our privacy policy"
 }

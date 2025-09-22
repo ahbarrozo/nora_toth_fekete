@@ -26,6 +26,17 @@ export const blogPostTypes = [
     }
 ];
 
+export const emailTypes = [
+    {
+        displayName: 'Events',
+        name: 'events',
+    },
+    {
+        displayName: 'Updates',
+        name: 'updates',
+    }
+];
+
 export const eventTypes = [
     {
         displayName: 'Class',
