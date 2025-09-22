@@ -331,7 +331,7 @@
 		for="text"
 		class="input bg-base-300 flex h-100 w-auto flex-col gap-y-4 overflow-y-scroll text-xl"
 	>
-		<div class="mt-4 flex gap-x-4">
+		<div class="bg-base-300 sticky top-0 z-1 flex gap-x-4 pt-4">
 			{#if editor}
 				<div class="join">
 					{#each menuItems.filter((item) => item.type === 'block') as item}

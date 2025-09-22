@@ -286,6 +286,8 @@
 	 *  on the 'isFirst' props.
 	 */
 	async function savePost() {
+		let response;
+
 		if (!postForm.title || postForm.title.length === 0) {
 			toaster.show('Please include a title.', 'error');
 			return;
@@ -325,15 +327,17 @@
 		blogPostFormData.append('images', JSON.stringify(postForm.images));
 		blogPostFormData.append('documents', JSON.stringify(postForm.documents));
 
-		const response = !body.id
-			? await fetch('?/saveBlogPost', {
-					method: 'POST',
-					body: blogPostFormData
-				})
-			: await fetch('?/updateBlogPost', {
-					method: 'POST',
-					body: blogPostFormData
-				});
+		if (body.id)
+			response = await fetch('?/updateBlogPost', {
+				method: 'POST',
+				body: blogPostFormData
+			});
+		else {
+			response = await fetch('?/saveBlogPost', {
+				method: 'POST',
+				body: blogPostFormData
+			});
+		}
 
 		const responseData = await response.json();
 		switch (responseData.status) {
@@ -408,6 +412,7 @@
 	}
 </script>
 
+<p>{id}</p>
 <fieldset class={`fieldset bg-base-200 border-base-300 rounded-box w-full border p-4`}>
 	<div class="flex flex-row gap-6">
 		<label for="name" class="select w-[15%] text-xl">
@@ -446,7 +451,7 @@
 		for="text"
 		class="input bg-base-300 flex h-100 w-auto flex-col gap-y-4 overflow-y-scroll text-xl"
 	>
-		<div class="mt-4 flex gap-x-4">
+		<div class="bg-base-300 sticky top-0 z-1 flex gap-x-4 pt-4">
 			{#if editor}
 				<div class="join">
 					{#each menuItems.filter((item) => item.type === 'block') as item}
@@ -486,6 +491,7 @@
 			New image
 		</button>
 	</div>
+	<div class="divider"></div>
 	<h3 class="m-4 text-3xl">Audios</h3>
 	{#if postForm.audios && postForm.audios.length > 0}
 		{#each postForm.audios as audio, i}
@@ -502,6 +508,7 @@
 			New audio
 		</button>
 	</div>
+	<div class="divider"></div>
 	<h3 class="m-4 text-3xl">Documents</h3>
 	{#if postForm.documents && postForm.documents.length > 0}
 		{#each postForm.documents as document, i}

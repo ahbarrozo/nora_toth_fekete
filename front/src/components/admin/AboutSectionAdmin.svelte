@@ -232,7 +232,7 @@
 		for="text"
 		class="input bg-base-300 flex h-100 w-auto flex-col gap-y-4 overflow-y-scroll text-xl"
 	>
-		<div class="mt-4 flex gap-x-4">
+		<div class="bg-base-300 sticky top-0 z-1 flex gap-x-4 pt-4">
 			{#if editor}
 				<div class="join">
 					{#each menuItems.filter((item) => item.type === 'block') as item}
@@ -287,7 +287,7 @@
 </fieldset>
 <dialog bind:this={modal} class="modal">
 	<div class="modal-box">
-		<h3 class="text-lg font-bold">Remove parágrafo</h3>
+		<h3 class="text-lg font-bold">Remove paragraph</h3>
 		<p class="py-4">Are you sure you want to proceed?</p>
 		<div class="modal-action">
 			<form class="flex gap-x-4" method="dialog">
