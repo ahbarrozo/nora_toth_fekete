@@ -3,6 +3,8 @@ export function isEmpty(str: undefined | null | string): boolean {
 }
 
 export function orderByDate(arr: any[], attribute: string): any[] {
+    if (arr.length === 0) return arr;
+
     if (!arr[0].hasOwnProperty('date')) {
         console.error(`Attribute ${attribute} not found in objects inside array to be sorted.`);
         return arr;
