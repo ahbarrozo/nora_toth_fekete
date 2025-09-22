@@ -4,5 +4,6 @@
 .env.prod
 bun.lock
 migrate.prod.sh
+package-lock.json
 dist/
 node_modules/

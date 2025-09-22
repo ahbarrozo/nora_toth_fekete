@@ -9,6 +9,7 @@ node_modules
 /build
 /static/documents/*
 /static/images/*
+package-lock.json
 
 # OS
 .DS_Store
