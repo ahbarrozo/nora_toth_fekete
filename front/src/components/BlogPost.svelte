@@ -210,7 +210,7 @@
                                     aspect-[4/3] w-3/5
                                     overflow-hidden"
 						/>
-					{:else}
+					{:else if images.length > 1}
 						<div
 							class="carousel
                                     float-left
@@ -260,12 +260,13 @@
 				{/if}
 				{@html text}
 			</div>
+			<div class="divider"></div>
 			{#if audios && audios.length > 0}
 				<div class="mt-4">
 					<h2>AUDIOS</h2>
 					<div class="flex flex-row flex-wrap">
 						{#each audios as audio, d (d)}
-							<div class="flex flex-col flex-wrap">
+							<div class="flex w-xl flex-col flex-wrap">
 								<span class=" mb-2 text-xl">{audio.title}</span>
 								<p class="mb-4 text-lg">{audio.description}</p>
 								<AudioPlayer {audio} />
@@ -274,15 +275,19 @@
 					</div>
 				</div>
 			{/if}
+			<div class="divider"></div>
 			{#if documents && documents.length > 0}
 				<h2>{m.download_files()}</h2>
-				<div class="flex flex-row flex-wrap">
+				<div class="flex flex-row flex-wrap gap-12">
 					{#each documents as document, d (d)}
-						<button
-							aria-label={`Download ${document.title}`}
-							onclick={() => downloadDocument(document.path)}
-							class="btn btn-primary mt-6">{document.title}</button
-						>
+						<div class="flex w-xs flex-col flex-wrap">
+							<button
+								aria-label={`Download ${document.title}`}
+								onclick={() => downloadDocument(document.path)}
+								class="btn btn-primary mt-6">{document.title}</button
+							>
+							<p class="mb-4 text-lg">{document.description}</p>
+						</div>
 					{/each}
 				</div>
 			{/if}
