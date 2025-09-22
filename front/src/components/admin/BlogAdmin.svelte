@@ -95,7 +95,7 @@
 
 <div class="mb-10 flex flex-wrap justify-center gap-x-8 gap-y-4">
 	<button class="btn btn-primary w-full" onclick={displayNewPost}>New post</button>
-	{#each displayedPosts as post, i (post.date)}
+	{#each displayedPosts as post, i (post.date + post.locale)}
 		<BlogPostAdmin {...post} onDelete={() => onDelete(post.id!)} />
 		{#if post.postNum && showDuplicateButton(post.postNum)}
 			<button class="btn btn-primary w-full" onclick={() => duplicatePost(post.postNum!)}
@@ -103,7 +103,7 @@
 			>
 		{/if}
 		{#if i < posts.length - 1 && posts[i].postNum !== posts[i + 1].postNum}
-			<div class="divider my-12"></div>
+			<div class="divider my-12 w-full"></div>
 		{/if}
 	{/each}
 </div>
