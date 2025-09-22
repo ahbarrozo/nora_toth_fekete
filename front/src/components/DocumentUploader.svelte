@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { type Document } from 'src/types/Document.types';
-	import { TrashSolid } from 'svelte-awesome-icons';
+	import { XmarkSolid } from 'svelte-awesome-icons';
 
 	let {
 		id,
@@ -83,8 +83,8 @@
 			accept=".pdf, .pptx, .docx, .xslx"
 			onchange={handleFileChange}
 		/>
-		<button class="btn btn-xs btn-outline btn-error text-white" onclick={() => onDelete()}>
-			<TrashSolid size="16" />
+		<button class="btn btn-xs btn-error text-white" onclick={() => onDelete()}>
+			<XmarkSolid size="16" />
 			Remove
 		</button>
 	</div>

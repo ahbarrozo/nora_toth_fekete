@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { type Image } from 'src/types/Image.types';
-	import { TrashSolid } from 'svelte-awesome-icons';
+	import { XmarkSolid } from 'svelte-awesome-icons';
 
 	let {
 		id,
@@ -92,8 +92,8 @@
 				<img src={imageThumbnail} alt="Preview" class="max-h-36 object-scale-down" />
 			{/if}
 		</div>
-		<button class="btn btn-xs btn-outline btn-error text-white" onclick={() => onDelete()}>
-			<TrashSolid size="16" />
+		<button class="btn btn-xs btn-error text-white" onclick={() => onDelete()}>
+			<XmarkSolid size="16" />
 			Remove
 		</button>
 	</div>
