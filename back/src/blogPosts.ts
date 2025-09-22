@@ -66,7 +66,6 @@ blogPosts.get('/', async (c) => {
             DESC;
         `);
 
-        console.log()
         const blogPosts = result.rows.reduce((rows, row) => {
             const image: Image | null = row.image_id
                 ? {
@@ -265,9 +264,9 @@ blogPosts.post('/', async (c) => {
 
 /**
  *  PUT request to update a blog entry based on its ID. It will
- *  check its existence, fetch images associated with it, and update
- *  all the fields available at the submission form, images included,
- *  if needed
+ *  check its existence, fetch images, audios and documents associated 
+ *  with it, and update all the fields available at the submission form, 
+ *  images included, if needed
  */
 blogPosts.put('/:id', authGuard, async (c) => {
     const pool: Pool = c.get('db');
@@ -309,9 +308,6 @@ blogPosts.put('/:id', authGuard, async (c) => {
             [blogPost.title, blogPost.subtitle, blogPost.text, blogPost.locale, blogPost.type, id]
         );
 
-        /**
-         *   Creating images
-         */
         const blogPostsImagesResults = await pool.query(
             `
             SELECT 
@@ -326,7 +322,6 @@ blogPosts.put('/:id', authGuard, async (c) => {
             [id]
         );
 
-        // separating between images to be deleted and upserted
         const imagesToDelete = blogPostsImagesResults.rows.filter(
             (im) => !images.map((i) => i.id).includes(im.image_id)
         );
@@ -345,7 +340,6 @@ blogPosts.put('/:id', authGuard, async (c) => {
             })
         );
 
-        // Check among images to insert if for no given ID. Else, update
         await Promise.all(
             imagesToUpsert.map(async (image) => {
                 if (!image.id) {
@@ -381,9 +375,6 @@ blogPosts.put('/:id', authGuard, async (c) => {
             })
         );
 
-        /**
-         *  Creating audios
-         */
         const blogPostsAudiosResults = await pool.query(
             `
             SELECT 
@@ -398,9 +389,8 @@ blogPosts.put('/:id', authGuard, async (c) => {
             [id]
         );
 
-        // separating between documents to be deleted and upserted
         const audiosToDelete = blogPostsAudiosResults.rows.filter(
-            (audio) => !audios.map((a) => a.id).includes(audio.image_id)
+            (audio) => !audios.map((a) => a.id).includes(audio.audio_id)
         );
         const audiosToUpsert = audios.filter(
             (audio) => !audio.id || !audiosToDelete.map((a) => a.id).includes(audio.id)
@@ -417,7 +407,6 @@ blogPosts.put('/:id', authGuard, async (c) => {
             })
         );
 
-        // Check among images to insert if for no given ID. Else, update
         await Promise.all(
             audiosToUpsert.map(async (audio) => {
                 if (!audio.id) {
@@ -453,9 +442,6 @@ blogPosts.put('/:id', authGuard, async (c) => {
             })
         );
 
-        /**
-         *  Creating documents
-         */
         const blogPostsDocumentsResults = await pool.query(
             `
             SELECT 
@@ -470,9 +456,8 @@ blogPosts.put('/:id', authGuard, async (c) => {
             [id]
         );
 
-        // separating between documents to be deleted and upserted
         const documentsToDelete = blogPostsDocumentsResults.rows.filter(
-            (doc) => !documents.map((d) => d.id).includes(doc.image_id)
+            (doc) => !documents.map((d) => d.id).includes(doc.document_id)
         );
         const documentsToUpsert = documents.filter(
             (doc) => !doc.id || !documentsToDelete.map((d) => d.id).includes(doc.id)
@@ -489,7 +474,6 @@ blogPosts.put('/:id', authGuard, async (c) => {
             })
         );
 
-        // Check among images to insert if for no given ID. Else, update
         await Promise.all(
             documentsToUpsert.map(async (doc) => {
                 if (!doc.id) {

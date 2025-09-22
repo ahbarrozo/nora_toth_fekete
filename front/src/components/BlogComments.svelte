@@ -134,7 +134,7 @@
 		</label>
 		<label
 			for="text"
-			class="input bg-base-300 h-100 flex w-auto flex-col gap-y-4 overflow-y-scroll text-xl"
+			class="input bg-base-300 flex h-100 w-auto flex-col gap-y-4 overflow-y-scroll text-xl"
 		>
 			<div class="mt-4 flex gap-x-4">
 				{#if editor}
@@ -164,12 +164,12 @@
 			<button class="btn btn-primary mt-10" onclick={saveComment}>{m.send()}</button>
 		</div>
 	</fieldset>
-	<div class="m-12 w-[75%]">
+	<div class="mt-6 w-full p-6">
 		<h2 class="mb-12 text-3xl">{m.comments()}</h2>
 		{#each displayedComments as comment}
 			<div class="flex flex-col">
 				<div class="flex flex-row justify-between">
-					<h2 class="text-2xl">{comment.author}</h2>
+					<h2 class="text-xl">{comment.author}</h2>
 					<time>{new Date(comment.date).toLocaleDateString()}</time>
 				</div>
 				{@html comment.text}

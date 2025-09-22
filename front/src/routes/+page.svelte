@@ -1,10 +1,8 @@
 <script lang="ts">
 	import * as m from 'src/paraglide/messages';
 
-	import { cover } from 'src/assets/Cover.mockdata';
 	import About from 'src/components/About.svelte';
 	import Contact from 'src/components/Contact.svelte';
-	import Cover from 'src/components/Cover.svelte';
 	import Blog from 'src/components/Blog.svelte';
 	import Events from 'src/components/Events.svelte';
 	import Works from 'src/components/Works.svelte';
