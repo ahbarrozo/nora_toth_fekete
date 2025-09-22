@@ -77,22 +77,22 @@
 			bind:value={description}
 		/>
 	</label>
-	<div class="preview flex flex-row items-center">
-		{#if path && !imageThumbnail}
-			<span class="badge badge-primary truncate">{path.replace('/images/', '')}</span>
-		{/if}
-		<input
-			type="file"
-			class="file-input file-input-ghost"
-			accept="image/*"
-			onchange={handleFileChange}
-		/>
-		{#if imageThumbnail}
-			<img src={imageThumbnail} alt="Preview" class="max-h-36 object-scale-down" />
-		{/if}
-	</div>
-	<div class="flex justify-end">
-		<button class="btn btn-xs btn-outline btn-error mt-10 text-white" onclick={() => onDelete()}>
+	<div class="preview flex flex-row items-center justify-between">
+		<div class="flex">
+			{#if path && !imageThumbnail}
+				<span class="badge badge-primary truncate">{path.replace('/images/', '')}</span>
+			{/if}
+			<input
+				type="file"
+				class="file-input file-input-ghost"
+				accept="image/*"
+				onchange={handleFileChange}
+			/>
+			{#if imageThumbnail}
+				<img src={imageThumbnail} alt="Preview" class="max-h-36 object-scale-down" />
+			{/if}
+		</div>
+		<button class="btn btn-xs btn-outline btn-error text-white" onclick={() => onDelete()}>
 			<TrashSolid size="16" />
 			Remove
 		</button>

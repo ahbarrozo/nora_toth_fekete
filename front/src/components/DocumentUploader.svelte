@@ -73,7 +73,7 @@
 			bind:value={description}
 		/>
 	</label>
-	<div class="preview flex flex-row items-center">
+	<div class="preview flex flex-row items-center justify-between">
 		{#if path}
 			<span class="badge badge-primary truncate">{path.replace('/documents/', '')}</span>
 		{/if}
@@ -83,9 +83,7 @@
 			accept=".pdf, .pptx, .docx, .xslx"
 			onchange={handleFileChange}
 		/>
-	</div>
-	<div class="flex justify-end">
-		<button class="btn btn-xs btn-outline btn-error mt-10 text-white" onclick={() => onDelete()}>
+		<button class="btn btn-xs btn-outline btn-error text-white" onclick={() => onDelete()}>
 			<TrashSolid size="16" />
 			Remove
 		</button>
