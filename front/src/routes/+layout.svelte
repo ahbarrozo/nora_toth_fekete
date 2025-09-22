@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import 'src/app.css';
 	import AudioIcons from 'src/components/AudioIcons.svelte';
 	import Toaster from 'src/components/Toaster.svelte';
@@ -7,6 +8,21 @@
 	import { PUBLIC_API_ENDPOINT } from '$env/static/public';
 
 	let { children } = $props();
+
+	let isLoaded = $state<boolean>(false);
+
+	onMount(() => {
+		const handleLoad = () => {
+			isLoaded = true;
+		};
+
+		if (document.readyState === 'complete') {
+			isLoaded = true;
+		} else {
+			window.addEventListener('load', handleLoad);
+			return () => window.removeEventListener('load', handleLoad);
+		}
+	});
 
 	/**
 	 *  Attempts to access an authrized Google account, redirecting
@@ -17,17 +33,27 @@
 	}
 </script>
 
-<div class="app h-full">
-	<Toolbar onAuthentication={attemptAccess} />
-	{@render children()}
-	<footer
-		class="footer sm:footer-horizontal
-                       bg-base-300
-					   flex
-                       justify-center p-10"
-	>
-		© Copyright Nora Toth-Fekete - All rights reserved
-	</footer>
-	<AudioIcons />
-	<Toaster />
-</div>
+{#if !isLoaded}
+	<div class="hero bg-base-200 min-h-screen">
+		<div class="hero-content text-center">
+			<div class="max-w-md">
+				<span class="loading loading-dots loading-xl"></span>
+			</div>
+		</div>
+	</div>
+{:else}
+	<div class="app h-full">
+		<Toolbar onAuthentication={attemptAccess} />
+		{@render children()}
+		<footer
+			class="footer sm:footer-horizontal
+						bg-base-300
+						flex
+						justify-center p-10"
+		>
+			© Copyright Nora Toth-Fekete - All rights reserved
+		</footer>
+		<AudioIcons />
+		<Toaster />
+	</div>
+{/if}
