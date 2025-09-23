@@ -195,13 +195,15 @@ works.put('/:id', authGuard, async (c) => {
 
 		const worksImagesResults = await pool.query(`
             SELECT 
-                wki.image_id, wki.work_id, 
+                wki.image_id, wki.work_id 
             FROM 
                 works_images wki
             WHERE 
                 wki.work_id = $1;`,
 			[id]
 		);
+
+		console.log({ worksImagesResults })
 
 		// separating between images to be deleted and upserted
 		const imagesToDelete = worksImagesResults.rows.filter(
