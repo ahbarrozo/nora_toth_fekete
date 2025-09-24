@@ -58,12 +58,12 @@
 	async function saveSocialMedia() {
 		// Form validation
 		if (isEmpty(postFormData.link)) {
-			toaster.show('Favor inserir um link.', 'error');
+			toaster.show('Please include a link.', 'error');
 			return;
 		}
 
 		if (isEmpty(postFormData.name)) {
-			toaster.show('Favor inserir um nome.', 'error');
+			toaster.show('Please include a name.', 'error');
 			return;
 		}
 

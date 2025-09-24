@@ -42,17 +42,17 @@
 	async function saveContact() {
 		// Form validation
 		if (isEmpty(postFormData.contact)) {
-			toaster.show('Favor inserir um responsável.', 'error');
+			toaster.show('Please include a contact.', 'error');
 			return;
 		}
 
 		if (isEmpty(postFormData.name)) {
-			toaster.show('Favor inserir um título.', 'error');
+			toaster.show('Please include a name.', 'error');
 			return;
 		}
 
 		if (isEmpty(postFormData.mail)) {
-			toaster.show('Favor inserir um e-mail.', 'error');
+			toaster.show('Please inclde an e-mail.', 'error');
 			return;
 		}
 
