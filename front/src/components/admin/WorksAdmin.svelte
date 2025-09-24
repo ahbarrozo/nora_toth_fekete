@@ -8,7 +8,7 @@
 
 	const { works }: WorksProps = $props();
 	const emptyWork: Work & { isNew?: boolean } = {
-		date: '',
+		date: new Date().toISOString(),
 		title: '',
 		description: '',
 		images: [] as Image[],
@@ -22,9 +22,11 @@
 	let displayedWorks = $derived(worksList.slice(firstWork, firstWork + WORKS_PER_PAGE));
 	let numPages = $derived(Math.ceil(worksList.length / WORKS_PER_PAGE));
 	let pages = $derived(Array.from({ length: numPages }, (_, i) => i + 1));
+	let newWorkId = $state(0);
 
 	function displayNewWork() {
-		worksList = [{ ...emptyWork, description: 'Describe your new work.' }, ...worksList];
+		newWorkId++;
+		worksList.unshift({ ...emptyWork });
 	}
 
 	function duplicateWork(title: string, date: string) {
@@ -74,7 +76,7 @@
 
 <div class="mb-10 flex flex-wrap justify-center gap-x-8 gap-y-4">
 	<button class="btn btn-primary w-full" onclick={displayNewWork}>New work</button>
-	{#each displayedWorks as work, i (i)}
+	{#each displayedWorks as work, i (work.id ?? 'new-' + newWorkId)}
 		<WorkAdmin {...work} onDelete={() => onDelete(work.id!)} />
 		{#if work.title && showDuplicateButton(work.title, work.date)}
 			<button class="btn btn-primary w-full" onclick={() => duplicateWork(work.title, work.date)}
