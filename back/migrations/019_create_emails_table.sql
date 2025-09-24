@@ -1,7 +1,7 @@
 CREATE TABLE emails (
     id SERIAL PRIMARY KEY,
     date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    email VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
     events BOOLEAN,
     updates BOOLEAN,
     locale VARCHAR(5) NOT NULL
