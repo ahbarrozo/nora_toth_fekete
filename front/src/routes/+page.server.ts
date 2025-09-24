@@ -50,8 +50,6 @@ export const actions: Actions = {
                 method: 'POST',
                 body: formData,
             });
-            console.log({ formData })
-            console.log(response)
             const result = await response.json();
 
             return { success: true, data: result };
@@ -59,21 +57,6 @@ export const actions: Actions = {
             return fail(500, { success: false, error });
         }
     },
-    // verifyToken: async ({ cookies, fetch }) => {
-    //     const response = await fetch(PUBLIC_API_ENDPOINT + 'auth/google',
-    //         {
-    //             method: 'GET',
-    //         }
-    //     );
-
-    //     const responseData = await response.json();
-
-    //     if (!responseData.isAuthenticated) {
-    //         cookies.delete('token', { path: '/' });
-    //         return { success: false };
-    //     }
-    //     redirect(303, '/admin');
-    // }
 };
 
 export const load: ServerLoad = async ({ fetch }): Promise<PageData> => {
@@ -81,6 +64,7 @@ export const load: ServerLoad = async ({ fetch }): Promise<PageData> => {
         const dataTables: DataTableName[] = [
             'about_sections',
             'blog_posts',
+            'blog_post_types',
             'blog_comments',
             'contacts',
             'events',

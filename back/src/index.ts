@@ -8,6 +8,7 @@ import { AppVariables } from './types/hono.types';
 import aboutSections from './aboutSections';
 import auth from './auth';
 import blogPosts from './blogPosts';
+import blogPostTypes from './blogPostTypes';
 import blogComments from './blogComments';
 import contacts from './contacts';
 import emails from './emails';
@@ -89,6 +90,7 @@ app.use(
 app.route('/about_sections', aboutSections);
 app.route('/auth', auth);
 app.route('/blog_posts', blogPosts);
+app.route('/blog_post_types', blogPostTypes);
 app.route('/blog_comments', blogComments);
 app.route('/contacts', contacts);
 app.route('/emails', emails);

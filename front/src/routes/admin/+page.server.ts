@@ -61,6 +61,24 @@ export const actions: Actions = {
             return fail(500, { success: false, error });
         }
     },
+    deleteBlogPostType: async ({ request, fetch }) => {
+        try {
+            const formData = await request.formData();
+
+            const id = formData.get('id');
+            const response = await fetch(PUBLIC_API_ENDPOINT + `blog_post_types/${id}`, {
+                method: 'DELETE',
+            });
+            const result = await response.json();
+
+            if (result.error)
+                // @ts-ignore
+                return fail(500, `Internal server error: ${result.error}`)
+            return { success: true, data: result };
+        } catch (error) {
+            return fail(500, { success: false, error });
+        }
+    },
     deleteContact: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
@@ -137,12 +155,11 @@ export const actions: Actions = {
             return fail(500, { success: false, error });
         }
     },
-    saveWork: async ({ request, fetch }) => {
+    saveBlogPost: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
 
-
-            const response = await fetch(PUBLIC_API_ENDPOINT + 'works', {
+            const response = await fetch(PUBLIC_API_ENDPOINT + 'blog_posts', {
                 method: 'POST',
                 body: formData,
             });
@@ -156,11 +173,11 @@ export const actions: Actions = {
             return fail(500, { success: false, error });
         }
     },
-    saveBlogPost: async ({ request, fetch }) => {
+    saveBlogPostType: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
 
-            const response = await fetch(PUBLIC_API_ENDPOINT + 'blog_posts', {
+            const response = await fetch(PUBLIC_API_ENDPOINT + 'blog_post_types', {
                 method: 'POST',
                 body: formData,
             });
@@ -228,6 +245,25 @@ export const actions: Actions = {
             return fail(500, { success: false, error });
         }
     },
+    saveWork: async ({ request, fetch }) => {
+        try {
+            const formData = await request.formData();
+
+
+            const response = await fetch(PUBLIC_API_ENDPOINT + 'works', {
+                method: 'POST',
+                body: formData,
+            });
+            const result = await response.json();
+
+            if (result.error)
+                // @ts-ignore
+                return fail(500, `Internal server error: ${result.error}`)
+            return { success: true, data: result };
+        } catch (error) {
+            return fail(500, { success: false, error });
+        }
+    },
     sendEmail: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
@@ -251,9 +287,27 @@ export const actions: Actions = {
         try {
             const formData = await request.formData();
 
-
             const id = formData.get('id');
             const response = await fetch(PUBLIC_API_ENDPOINT + `about_sections/${id}`, {
+                method: 'PUT',
+                body: formData,
+            });
+            const result = await response.json();
+
+            if (result.error)
+                // @ts-ignore
+                return fail(500, `Internal server error: ${result.error}`)
+            return { success: true, data: result };
+        } catch (error) {
+            return fail(500, { success: false, error });
+        }
+    },
+    updateBlogPostType: async ({ request, fetch }) => {
+        try {
+            const formData = await request.formData();
+
+            const id = formData.get('id');
+            const response = await fetch(PUBLIC_API_ENDPOINT + `blog_post_types/${id}`, {
                 method: 'PUT',
                 body: formData,
             });
@@ -270,7 +324,6 @@ export const actions: Actions = {
     updateWork: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
-
 
             const id = formData.get('id');
             const response = await fetch(PUBLIC_API_ENDPOINT + `works/${id}`, {
@@ -290,7 +343,6 @@ export const actions: Actions = {
         try {
             const formData = await request.formData();
 
-
             const id = formData.get('id');
             const response = await fetch(PUBLIC_API_ENDPOINT + `blog_posts/${id}`, {
                 method: 'PUT',
@@ -308,6 +360,7 @@ export const actions: Actions = {
     updateContact: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
+
             const id = formData.get('id');
             const response = await fetch(PUBLIC_API_ENDPOINT + `contacts/${id}`, {
                 method: 'PUT',
@@ -325,6 +378,7 @@ export const actions: Actions = {
     updateEvent: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
+
             const id = formData.get('id');
             const response = await fetch(PUBLIC_API_ENDPOINT + `events/${id}`, {
                 method: 'PUT',
@@ -343,7 +397,6 @@ export const actions: Actions = {
         try {
             const formData = await request.formData();
 
-
             const id = formData.get('id');
             const response = await fetch(PUBLIC_API_ENDPOINT + `social_media/${id}`, {
                 method: 'PUT',
@@ -361,6 +414,7 @@ export const actions: Actions = {
     uploadAudio: async ({ request }) => {
         try {
             const formData = await request.formData();
+
             const file = formData.get('audio');
             if (!(file instanceof Object) || !file.name) {
                 return fail(400, { missing: true });
@@ -397,6 +451,7 @@ export const actions: Actions = {
     uploadImage: async ({ request }) => {
         try {
             const formData = await request.formData();
+
             const file = formData.get('image');
             if (!(file instanceof Object) || !file.name) {
                 return fail(400, { missing: true });
@@ -429,6 +484,7 @@ export const load: ServerLoad = async ({ fetch }): Promise<PageData> => {
         const dataTables: DataTableName[] = [
             'about_sections',
             'blog_posts',
+            'blog_post_types',
             'contacts',
             'events',
             'social_media',

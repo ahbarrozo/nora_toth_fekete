@@ -26,7 +26,11 @@
 	<Events events={apiData.events} />
 	<div class="divider"></div>
 	<h2 id="blog" class="text-4xl">BLOG</h2>
-	<Blog blogPosts={apiData.blog_posts} blogComments={apiData.blog_comments} />
+	<Blog
+		blogPosts={apiData.blog_posts}
+		blogComments={apiData.blog_comments}
+		blogPostTypes={apiData.blog_post_types}
+	/>
 	<div class="divider"></div>
 	<h2 id="contact" class="text-4xl">CONTACT</h2>
 	<Contact contacts={apiData.contacts} socialMedia={apiData.social_media} />

@@ -3,16 +3,17 @@
 	import BlogPost from './BlogPost.svelte';
 	import { type BlogPostProps } from '../types/BlogPost.types';
 	import type { BlogCommentProps } from 'src/types/BlogComment.types';
-	import { blogPostColors, blogPostTypes } from 'src/common/constants';
+	import type { BlogPostTypeProps } from 'src/types/BlogPostType.types';
 
 	interface BlogProps {
 		blogPosts: BlogPostProps[];
+		blogPostTypes: BlogPostTypeProps[];
 		blogComments: BlogCommentProps[];
 	}
 
 	const POSTS_PER_PAGE = 6;
 
-	const { blogPosts, blogComments }: BlogProps = $props();
+	const { blogPosts, blogComments, blogPostTypes }: BlogProps = $props();
 
 	let currentPage = $state(1);
 	let posts = $state(blogPosts);
@@ -32,8 +33,9 @@
 		}, new Map())
 	);
 	let firstPost = $derived((currentPage - 1) * POSTS_PER_PAGE);
+	$inspect(posts);
 	let displayedPosts = $derived(
-		posts.filter((p) => postTypes.includes(p.type)).slice(firstPost, firstPost + POSTS_PER_PAGE)
+		posts.filter((p) => postTypes.includes(p.type!)).slice(firstPost, firstPost + POSTS_PER_PAGE)
 	);
 	let newestPost = $derived(
 		displayedPosts.length > 0 ? { ...displayedPosts[0], isFirst: true } : null
@@ -42,26 +44,21 @@
 	const numPages = $derived(Math.ceil(posts.length / POSTS_PER_PAGE));
 	const pages = $derived(Array.from({ length: numPages }, (_, i) => i + 1));
 
-	function displayType(postType: string | null) {
+	function displayType(postType: string) {
 		return postTypes.includes(postType);
 	}
 
-	function toggleType(postType: string | null) {
+	function toggleType(postType: string) {
 		const index = postTypes.findIndex((p) => p === postType);
 
 		if (index === -1) postTypes.push(postType);
 		else postTypes.splice(index, 1);
 	}
 
-	function typeColor(postType: string | null) {
-		return blogPostColors.get(postType);
-	}
+	function typeColor(postType: string) {
+		const blogType = blogPostTypes.find((p) => p.name === postType);
 
-	function typeLabel(postType: string | null) {
-		if (postType)
-			// @ts-ignore
-			return m[postType]();
-		return m.other();
+		return blogType ? blogType.color : 'oklch(27% 0.006 286.033)';
 	}
 </script>
 
@@ -89,7 +86,7 @@
 							19 19 17.59 13.41 12z"
 				></path>
 			</svg>
-			{typeLabel(type.name)}
+			{m[type.name]()}
 		</div>
 	{/each}
 </div>

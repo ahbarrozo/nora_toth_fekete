@@ -9,6 +9,7 @@
 	import type { PageData } from 'src/types/PageData.types';
 	import Schedule from 'src/components/admin/Schedule.svelte';
 	import EmailAdmin from 'src/components/admin/EmailAdmin.svelte';
+	import BlogPostTypesAdmin from 'src/components/admin/BlogPostTypesAdmin.svelte';
 
 	const { data } = $props<{ data: PageData }>();
 	const { apiData } = data;
@@ -45,6 +46,10 @@
 		<input type="radio" name="my_tabs_3" class="tab" aria-label="E-MAIL" />
 		<div class="tab-content bg-base-100 border-base-300 p-6">
 			<EmailAdmin />
+		</div>
+		<input type="radio" name="my_tabs_3" class="tab" aria-label="BLOG POST TYPES" />
+		<div class="tab-content bg-base-100 border-base-300 p-6">
+			<BlogPostTypesAdmin blogPostTypes={apiData.blog_post_types} />
 		</div>
 	</div>
 </main>
