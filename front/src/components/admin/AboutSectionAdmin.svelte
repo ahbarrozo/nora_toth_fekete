@@ -1,92 +1,19 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { type Readable } from 'svelte/store';
-	import { createEditor } from 'svelte-tiptap';
-	import { Editor } from '@tiptap/core';
-
 	import type { AboutSection } from 'src/types/About.types';
 	import { PlusSolid, TrashSolid } from 'svelte-awesome-icons';
 	import { toaster } from 'src/stores/toaster.store';
 	import ImageUploader from '../ImageUploader.svelte';
 	import type { Image } from 'src/types/Image.types';
 	import { locales } from 'src/common/constants';
-	import type { Button } from 'src/types/TextEditor.types';
+	import TextEditor from '../TextEditor.svelte';
 
 	let { id, sectionNum, images, text, locale, onDelete }: AboutSection & { onDelete: Function } =
 		$props();
 
-	let editor = $state() as Readable<Editor>;
-	let editorDiv: HTMLElement;
 	let modal: HTMLDialogElement;
-	let menuItems: Button[] = $state([]);
 	let postForm = $state({
 		images,
 		locale
-	});
-
-	/**
-	 *  Upon mounting, the tiptap editor will be initialized,
-	 *  including a callback to update the text field and all
-	 *  its buttons.
-	 */
-	onMount(async () => {
-		let { StarterKit } = await import('@tiptap/starter-kit');
-
-		editor = createEditor({
-			extensions: [StarterKit],
-			element: editorDiv,
-			content: text,
-			onUpdate: ({ editor }) => {
-				text = editor.getHTML();
-			},
-			editorProps: {
-				attributes: {
-					class: `rounded-b-md p-8 outline-hidden h-82 w-auto`
-				}
-			}
-		});
-
-		editor.subscribe(($editor) => {
-			const isActive = (name: string, attrs = {}) => $editor.isActive(name, attrs);
-
-			menuItems = [
-				{
-					active: () => isActive('heading', { level: 1 }),
-					command: () => $editor.chain().focus().toggleHeading({ level: 1 }).run(),
-					content: 'H1',
-					name: 'heading-1',
-					type: 'block'
-				},
-				{
-					active: () => isActive('heading', { level: 2 }),
-					command: () => $editor.chain().focus().toggleHeading({ level: 2 }).run(),
-					content: 'H2',
-					name: 'heading-2',
-					type: 'block'
-				},
-				{
-					active: () => isActive('paragraph'),
-					command: () => $editor.chain().focus().setParagraph().run(),
-					content: 'P',
-					name: 'paragraph',
-					type: 'block'
-				},
-				{
-					active: () => isActive('bold'),
-					command: () => $editor.chain().focus().toggleBold().run(),
-					content: 'B',
-					name: 'bold',
-					type: 'inline'
-				},
-				{
-					active: () => isActive('italic'),
-					command: () => $editor.chain().focus().toggleItalic().run(),
-					content: 'I',
-					name: 'italic',
-					type: 'inline'
-				}
-			];
-		});
 	});
 
 	/**
@@ -232,30 +159,7 @@
 		for="text"
 		class="input bg-base-300 flex h-100 w-auto flex-col gap-y-4 overflow-y-scroll text-xl"
 	>
-		<div class="bg-base-300 sticky top-0 z-1 flex gap-x-4 pt-4">
-			{#if editor}
-				<div class="join">
-					{#each menuItems.filter((item) => item.type === 'block') as item}
-						<button
-							aria-label={item.content}
-							class="btn btn-square join-item {item.active() ? 'btn-active' : ''}"
-							onclick={() => item.command()}>{item.content}</button
-						>
-					{/each}
-				</div>
-
-				<div class="join ml-2">
-					{#each menuItems.filter((item) => item.type === 'inline') as item}
-						<button
-							aria-label={item.content}
-							class="btn btn-square join-item {item.active() ? 'btn-active' : ''}"
-							onclick={() => item.command()}>{item.content}</button
-						>
-					{/each}
-				</div>
-			{/if}
-		</div>
-		<div class="w-full" bind:this={editorDiv}></div>
+		<TextEditor bind:html={text} />
 	</label>
 
 	<h3 class="m-4 text-3xl">Imagem</h3>

@@ -1,7 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { type Readable } from 'svelte/store';
-	import { createEditor } from 'svelte-tiptap';
 	import { PlusSolid, TrashSolid } from 'svelte-awesome-icons';
 
 	import { toaster } from 'src/stores/toaster.store';
@@ -10,11 +7,11 @@
 	import ImageUploader from '../ImageUploader.svelte';
 	import type { Image } from 'src/types/Image.types';
 	import { blogPostTypes, locales } from 'src/common/constants';
-	import type { Button } from 'src/types/TextEditor.types';
 	import AudioUploader from '../AudioUploader.svelte';
 	import DocumentUploader from '../DocumentUploader.svelte';
 	import { type Audio } from 'src/types/Audio.types';
 	import { type Document } from 'src/types/Document.types';
+	import TextEditor from '../TextEditor.svelte';
 
 	let {
 		id,
@@ -39,10 +36,7 @@
 	});
 	const dateString = $derived(dateFormat.format(new Date(date)));
 
-	let editor = $state() as Readable<any>;
-	let editorDiv: HTMLElement;
 	let modal: HTMLDialogElement;
-	let menuItems: Button[] = $state([]);
 	let postForm = $state({
 		locale,
 		subtitle,
@@ -51,91 +45,6 @@
 		images,
 		audios,
 		documents
-	});
-
-	/**
-	 *  Upon mounting, the tiptap editor will be initialized,
-	 *  including a callback to update the text field and all
-	 *  its buttons.
-	 */
-	onMount(async () => {
-		let Audio = await import('src/lib/AudioExtension');
-		let { Image } = await import('@tiptap/extension-image');
-		let { StarterKit } = await import('@tiptap/starter-kit');
-		let { Youtube } = await import('@tiptap/extension-youtube');
-
-		editor = createEditor({
-			//@ts-ignore
-			extensions: [StarterKit, Image, Youtube],
-			element: editorDiv,
-			content: text,
-			onUpdate: ({ editor }) => {
-				text = editor.getHTML();
-			},
-			editorProps: {
-				attributes: {
-					class: `rounded-b-md p-8 outline-hidden h-82 ${isFirst ? 'w-auto' : 'w-100'}`
-				}
-			}
-		});
-
-		editor.subscribe(($editor) => {
-			if ($editor) {
-				const isActive = (name: string, attrs = {}) => $editor.isActive(name, attrs);
-
-				menuItems = [
-					{
-						active: () => isActive('heading', { level: 1 }),
-						command: () => $editor.chain().focus().toggleHeading({ level: 1 }).run(),
-						content: 'H1',
-						name: 'heading-1',
-						type: 'block'
-					},
-					{
-						active: () => isActive('heading', { level: 2 }),
-						command: () => $editor.chain().focus().toggleHeading({ level: 2 }).run(),
-						content: 'H2',
-						name: 'heading-2',
-						type: 'block'
-					},
-					{
-						active: () => isActive('paragraph'),
-						command: () => $editor.chain().focus().setParagraph().run(),
-						content: 'P',
-						name: 'paragraph',
-						type: 'block'
-					},
-					{
-						active: () => isActive('bold'),
-						command: () => $editor.chain().focus().toggleBold().run(),
-						content: 'B',
-						name: 'bold',
-						type: 'inline'
-					},
-					{
-						active: () => isActive('italic'),
-						command: () => $editor.chain().focus().toggleItalic().run(),
-						content: 'I',
-						name: 'italic',
-						type: 'inline'
-					},
-					{
-						active: () => false,
-						command: () => insertImage(),
-						content: '🎵',
-						name: 'image',
-						type: 'block'
-					},
-					{
-						active: () => false, // Audio is inserted, not toggled
-						command: () => insertYoutubeVideo(),
-						content: '📺',
-						name: 'video',
-						type: 'block'
-					}
-				];
-			}
-		});
 	});
 
 	function addAudio() {
@@ -225,60 +134,6 @@
 		postForm.documents = postForm.documents
 			?.slice(0, index)
 			.concat(postForm.documents?.slice(index + 1));
-	}
-
-	/**
-	 * Shows a prompt to upload an image and include it in the text
-	 */
-	async function insertImage() {
-		const input = document.createElement('input');
-		input.type = 'file';
-		input.accept = 'image/*';
-		input.multiple = false;
-
-		input.oncancel = () => input.remove();
-		input.onchange = async (e: Event) => {
-			// @ts-ignore
-			const file = e.target?.files?.[0];
-
-			console.log(file);
-			await uploadToServer(file);
-
-			if (file && editor) {
-				$editor
-					.chain()
-					.focus()
-					.insertContent({
-						type: 'image',
-						attrs: {
-							src: `images/${file.name}`,
-							alt: file.name
-						}
-					})
-					.run();
-			}
-
-			input.remove();
-		};
-
-		input.click();
-		return true;
-	}
-
-	function insertYoutubeVideo() {
-		const url = prompt('Enter YouTube URL: ');
-		const width = 640;
-		const height = 480;
-
-		if (url) {
-			return $editor.commands.setYoutubeVideo({
-				src: url,
-				width: Math.max(320, width) || 640,
-				height: Math.max(180, height) || 480
-			});
-		}
-
-		return false;
 	}
 
 	/**
@@ -395,24 +250,8 @@
 		if (postForm.documents && postForm.documents.length > i)
 			postForm.documents[i] = { ...document };
 	}
-
-	// Function to upload file to server
-	async function uploadToServer(file: File) {
-		try {
-			const formData = new FormData();
-			formData.append('image', file);
-
-			const response = await fetch('?/uploadImage', {
-				method: 'POST',
-				body: formData
-			});
-		} catch (error) {
-			console.error('Error uploading file:', error);
-		}
-	}
 </script>
 
-<p>{id}</p>
 <fieldset class={`fieldset bg-base-200 border-base-300 rounded-box w-full border p-4`}>
 	<div class="flex flex-row gap-6">
 		<label for="name" class="select w-[15%] text-xl">
@@ -451,29 +290,7 @@
 		for="text"
 		class="input bg-base-300 flex h-100 w-auto flex-col gap-y-4 overflow-y-scroll text-xl"
 	>
-		<div class="bg-base-300 sticky top-0 z-1 flex gap-x-4 pt-4">
-			{#if editor}
-				<div class="join">
-					{#each menuItems.filter((item) => item.type === 'block') as item}
-						<button
-							aria-label={item.content}
-							class="btn btn-square join-item {item.active() ? 'btn-active' : ''}"
-							onclick={() => item.command()}>{item.content}</button
-						>
-					{/each}
-				</div>
-				<div class="join ml-2">
-					{#each menuItems.filter((item) => item.type === 'inline') as item}
-						<button
-							aria-label={item.content}
-							class="btn btn-square join-item {item.active() ? 'btn-active' : ''}"
-							onclick={() => item.command()}>{item.content}</button
-						>
-					{/each}
-				</div>
-			{/if}
-		</div>
-		<div class="w-full" bind:this={editorDiv}></div>
+		<TextEditor bind:html={text} imageContent youtubeContent />
 	</label>
 	<h3 class="m-4 text-3xl">Images</h3>
 	{#if postForm.images && postForm.images.length > 0}
