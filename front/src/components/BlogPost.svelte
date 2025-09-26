@@ -4,13 +4,12 @@
 	import { type BlogPostProps } from 'src/types/BlogPost.types';
 	import BlogComments from './BlogComments.svelte';
 	import type { BlogCommentProps } from 'src/types/BlogComment.types';
-	import { blogPostColors } from 'src/common/constants';
-	import 'media-chrome';
 	import AudioPlayer from './AudioPlayer.svelte';
 	import { orderByDate } from 'src/common/dataParsing';
 
 	const {
 		id,
+		color,
 		date,
 		audios,
 		documents,
@@ -73,10 +72,6 @@
 		if (modal) modal.showModal();
 	}
 
-	function typeColor(postType: string | null) {
-		return blogPostColors.get(postType);
-	}
-
 	function typeLabel(postType: string | null) {
 		if (postType)
 			// @ts-ignore
@@ -122,7 +117,7 @@
 				<h2 class="card-title text-3xl">{title}</h2>
 				<div class="flex flex-row items-center justify-between">
 					<span class=" text-xl">{subtitle}</span>
-					<div class="badge" style={`background-color: ${typeColor(type)}`}>{typeLabel(type)}</div>
+					<div class="badge" style={`background-color: ${color};`}>{typeLabel(type)}</div>
 				</div>
 				<p class="mb-4 text-lg">
 					{@html truncatedHTML()}
@@ -147,11 +142,11 @@
 					/>
 				{/if}
 				<div class="relative h-160 w-80 sm:h-96 sm:w-xl lg:w-2xl xl:w-3xl 2xl:w-5xl">
-					<div class="absolute top-0">
+					<div class="top-0">
 						<h1 class="text-2xl sm:text-5xl">{title}</h1>
 						<div class="flex flex-row justify-between">
 							<span class=" sm:text-2xl">{subtitle}</span>
-							<div class="badge" style={`background-color: ${typeColor(type)}`}>
+							<div class="badge" style={`background-color: ${color};`}>
 								{typeLabel(type)}
 							</div>
 						</div>

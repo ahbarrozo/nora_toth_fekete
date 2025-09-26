@@ -3,18 +3,17 @@
 	import BlogPost from './BlogPost.svelte';
 	import { type BlogPostProps } from '../types/BlogPost.types';
 	import type { BlogCommentProps } from 'src/types/BlogComment.types';
-	import type { BlogPostTypeProps } from 'src/types/BlogPostType.types';
+	import type { BlogPostType } from 'src/types/BlogPostType.types';
 
 	interface BlogProps {
 		blogPosts: BlogPostProps[];
-		blogPostTypes: BlogPostTypeProps[];
+		blogPostTypes: BlogPostType[];
 		blogComments: BlogCommentProps[];
 	}
 
 	const POSTS_PER_PAGE = 6;
 
 	const { blogPosts, blogComments, blogPostTypes }: BlogProps = $props();
-
 	let currentPage = $state(1);
 	let posts = $state(blogPosts);
 	let postTypes = $state(blogPostTypes.map((t) => t.name));
@@ -33,7 +32,6 @@
 		}, new Map())
 	);
 	let firstPost = $derived((currentPage - 1) * POSTS_PER_PAGE);
-	$inspect(posts);
 	let displayedPosts = $derived(
 		posts.filter((p) => postTypes.includes(p.type!)).slice(firstPost, firstPost + POSTS_PER_PAGE)
 	);
@@ -92,11 +90,16 @@
 </div>
 <div class="mb-10 flex flex-wrap justify-center gap-x-8 gap-y-4 p-6">
 	{#if newestPost}
-		<BlogPost {...newestPost} comments={comments.get(newestPost.id) ?? []}></BlogPost>
+		<BlogPost
+			{...newestPost}
+			color={typeColor(newestPost.type)}
+			comments={comments.get(newestPost.id) ?? []}
+		></BlogPost>
 	{/if}
 	{#each displayedPosts as post}
 		{#if !post.isFirst && newestPost && post.id !== newestPost.id}
-			<BlogPost {...post} comments={comments.get(post.id) ?? []}></BlogPost>
+			<BlogPost {...post} color={typeColor(post.type)} comments={comments.get(post.id) ?? []}
+			></BlogPost>
 		{/if}
 	{/each}
 </div>

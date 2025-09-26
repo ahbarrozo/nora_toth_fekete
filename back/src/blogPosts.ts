@@ -154,9 +154,12 @@ blogPosts.post('/', async (c) => {
             locale: data.get('locale')!.toString(),
             type: data.get('type')! && data.get('type')!.toString() // nullable field
         };
+
         const audios: AudioDTO[] = JSON.parse(data.get('audios')!.toString());
         const documents: DocumentDTO[] = JSON.parse(data.get('documents')!.toString());
         const images: ImageDTO[] = JSON.parse(data.get('images')!.toString());
+
+        if (!blogPost.type) blogPost.type = 'other';
 
         const blogPostQuery = await pool.query(`
             INSERT INTO 
@@ -282,6 +285,9 @@ blogPosts.put('/:id', authGuard, async (c) => {
     const audios: AudioDTO[] = JSON.parse(data.get('audios')!.toString());
     const documents: DocumentDTO[] = JSON.parse(data.get('documents')!.toString());
     const images: ImageDTO[] = JSON.parse(data.get('images')!.toString());
+
+    if (!blogPost.type) blogPost.type = 'other';
+
 
     try {
         const checkBlogPost = await pool.query(`
