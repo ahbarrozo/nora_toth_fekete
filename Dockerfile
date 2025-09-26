@@ -32,6 +32,8 @@ COPY --from=back-build /app/back/.env /apps/back/
 
 # Copy the Site (node app)
 COPY --from=front-build /app/front/build /apps/front/build
+COPY --from=front-build /app/front/node_modules /apps/front/node_modules
+COPY --from=front-build /app/front/package.json /apps/front/package.json
 COPY --from=front-build /app/front/.env /apps/front
 
 # Create PM2 config file
