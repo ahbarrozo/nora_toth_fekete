@@ -7,7 +7,7 @@
 	const { blogPostTypes }: BlogPostTypesProps = $props();
 	const emptyBlogPostType: BlogPostType = {
 		color: '',
-		displayName: '',
+		display_name: '',
 		name: ''
 	};
 

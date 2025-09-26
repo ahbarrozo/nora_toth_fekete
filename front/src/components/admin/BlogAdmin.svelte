@@ -16,6 +16,7 @@
 	const emptyPost: BlogPostProps = {
 		date: new Date().toISOString(),
 		audios: [] as Audio[],
+		color: '',
 		documents: [] as Document[],
 		images: [] as Image[],
 		isFirst: true,
@@ -23,7 +24,7 @@
 		subtitle: '',
 		title: '',
 		text: '',
-		type: null
+		type: 'other'
 	};
 
 	let posts = $state(blogPosts);
