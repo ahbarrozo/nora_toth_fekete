@@ -1,40 +1,46 @@
+# Backend build
 FROM oven/bun:latest AS back-build
+
 WORKDIR /app/back
-COPY back/package.json back/bun.lock back/.env ./
+
+COPY back/package.json back/bun.lock ./
 RUN bun install
-COPY back/. .
+
+COPY back/ .
 RUN bun build src/index.ts --outdir dist --target bun
 
+
+# Frontend build
 FROM node:22.12.0-alpine AS front-build
+
 WORKDIR /app/front
-COPY front/.env front/package.json front/package-lock.json front/src ./
+
+COPY front/.env front/package.json front/package-lock.json ./
 RUN npm ci
-COPY front/. .
+
+COPY front/ .
 RUN npm run build
 RUN npm prune --production
 
 # Final combined image
 FROM node:22.12.0-alpine
+
 WORKDIR /apps
 
 # Install Bun
 RUN apk add --no-cache curl unzip bash
 RUN curl -fsSL https://bun.sh/install | bash
 ENV PATH="/root/.bun/bin:${PATH}"
-RUN bun --version
 
 # Install PM2
 RUN npm install -g pm2
 
-# Copy the API (bun app)
+# Copy all builds
 COPY --from=back-build /app/back/dist /apps/back/dist
-COPY --from=back-build /app/back/.env /apps/back/
 
-# Copy the Site (node app)
 COPY --from=front-build /app/front/build /apps/front/build
 COPY --from=front-build /app/front/node_modules /apps/front/node_modules
 COPY --from=front-build /app/front/package.json /apps/front/package.json
-COPY --from=front-build /app/front/.env /apps/front
 
 # Create PM2 config file
 COPY ecosystem.config.js .
