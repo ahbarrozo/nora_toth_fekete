@@ -270,7 +270,7 @@
 		<TextEditor bind:html={description} />
 	</label>
 
-	<h3 class="m-4 text-3xl">Imagem</h3>
+	<h3 class="m-4 text-3xl">Image</h3>
 	{#if postForm.images && postForm.images.length > 0}
 		{#each postForm.images as image, i}
 			<ImageUploader

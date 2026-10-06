@@ -3,13 +3,14 @@
 
 	import AboutAdmin from 'src/components/admin/AboutAdmin.svelte';
 	import BlogAdmin from 'src/components/admin/BlogAdmin.svelte';
+    import BlogPostTypesAdmin from 'src/components/admin/BlogPostTypesAdmin.svelte';
 	import ContactsAdmin from 'src/components/admin/ContactsAdmin.svelte';
+    import CoversAdmin from 'src/components/admin/CoversAdmin.svelte';
+    import EmailAdmin from 'src/components/admin/EmailAdmin.svelte';
 	import EventsAdmin from 'src/components/admin/EventsAdmin.svelte';
-	import WorksAdmin from 'src/components/admin/WorksAdmin.svelte';
 	import type { PageData } from 'src/types/PageData.types';
 	import Schedule from 'src/components/admin/Schedule.svelte';
-	import EmailAdmin from 'src/components/admin/EmailAdmin.svelte';
-	import BlogPostTypesAdmin from 'src/components/admin/BlogPostTypesAdmin.svelte';
+    import WorksAdmin from 'src/components/admin/WorksAdmin.svelte';
 
 	const { data } = $props<{ data: PageData }>();
 	const { apiData } = data;
@@ -23,6 +24,12 @@
 		<div class="tab-content bg-base-100 border-base-300 p-6">
 			<Schedule events={apiData.events} />
 		</div>
+
+	    <input type="radio" name="my_tabs_3" class="tab" aria-label="COVER" />
+		<div class="tab-content bg-base-100 border-base-300 p-6">
+			<CoversAdmin covers={apiData.covers} />
+		</div>
+
 		<input type="radio" name="my_tabs_3" class="tab" aria-label={m.about()} />
 		<div class="tab-content bg-base-100 border-base-300 p-6">
 			<AboutAdmin aboutSections={apiData.about_sections} />

@@ -87,19 +87,19 @@
 	</div>
 
 	<div class="navbar-center hidden lg:flex lg:justify-center lg:gap-12">
-		<button onclick={() => scrollToSection('bio')} class="anchor font-questrial tracking-widest"
+		<button onclick={() => scrollToSection('bio')} class="anchor font-questrial tracking-widest text-2xl"
 			>{m.about()}</button
 		>
-		<button onclick={() => scrollToSection('works')} class="anchor font-questrial tracking-widest"
+		<button onclick={() => scrollToSection('works')} class="anchor font-questrial tracking-widest text-2xl"
 			>{m.works()}</button
 		>
-		<button onclick={() => scrollToSection('events')} class="anchor font-questrial tracking-widest"
+		<button onclick={() => scrollToSection('events')} class="anchor font-questrial tracking-widest text-2xl"
 			>{m.events_menu()}</button
 		>
-		<button onclick={() => scrollToSection('blog')} class="anchor font-questrial tracking-widest"
+		<button onclick={() => scrollToSection('blog')} class="anchor font-questrial tracking-widest text-2xl"
 			>BLOG</button
 		>
-		<button onclick={() => scrollToSection('contact')} class="anchor font-questrial tracking-widest"
+		<button onclick={() => scrollToSection('contact')} class="anchor font-questrial tracking-widest text-2xl"
 			>CONTACT</button
 		>
 	</div>

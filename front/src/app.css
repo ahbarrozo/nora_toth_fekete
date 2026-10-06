@@ -7,12 +7,17 @@
     /* --color-base-100: #282e52;
     --color-base-200: #282e52;
     --color-base-300: #131832; */
-    --color-base-content: #1c4f4a;
-    --color-primary: #1c4f4a;
+    /* --color-primary: #1c4f4a;
+    --color-base-content: #1c4f4a; */
+    --color-base-300: #ffe5c8;
+    /* --color-primary: #572e4f; */
+    --color-base-content: #3b1c6d;
+    --color-primary: #3b1c6d;
     /*--color-secondary: #1c5f17; */
     --color-secondary-highlight: var(--color-accent-content);
-    /* --color-success: #01a165; */
-    --background: #f5f3ef;
+    /* --color-success: #01a165;
+    --background: #f5f3ef; */
+    --background: #ffe5c8;
     --blog-card-background: var(--color-base-100);
     --card-p: 1.5rem;
 }
@@ -28,16 +33,22 @@
 body {
     font-family: Questrial;
     background: var(--background);
+    padding: 1rem;
 }
 
+/* 
+fieldset {
+    min-width: 0;
+} */
+
 h1 {
-    font-size: 3rem;
-    font-weight: 800;
+    font-size: 6rem;
+    font-weight: 900;
 }
 
 h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 3rem;
+    font-weight: 800;
 }
 
 input:focus {
@@ -51,6 +62,7 @@ input .active {
 
 
 p {
+    font-size: 1.5rem;
     text-justify: auto;
 
 }
@@ -64,6 +76,10 @@ p+h2 {
     margin-top: 2rem;
 }
 
+strong {
+    font-weight: 700
+}
+
 a:hover,
 button:hover,
 .icon:hover {
@@ -73,7 +89,8 @@ button:hover,
 }
 
 .app {
-    background-color: var(--color-base-300);
+    /*background-color: var(--color-base-300); */
+    background-color: var(--background);
 }
 
 .badge {
@@ -135,8 +152,17 @@ button:hover,
 
 .card {
     background: var(--blog-card-background);
+    padding: 1rem;
 }
 
 .divider {
     margin: 2rem;
+}
+
+.hero {
+    background: var(--blog-card-background);
+    border-radius: 1rem;
+    margin: 2.5rem;
+    padding: 1rem;
+    width: 97%;
 }

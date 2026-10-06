@@ -34,10 +34,10 @@
 </script>
 
 {#if !isLoaded}
-	<div class="hero bg-base-200 min-h-screen">
+	<div class="hero bg-base-300 min-h-screen">
 		<div class="hero-content text-center">
 			<div class="max-w-md">
-				<span class="loading loading-dots loading-xl"></span>
+				<span class="loading loading-bars w-48 h-48"></span>
 			</div>
 		</div>
 	</div>

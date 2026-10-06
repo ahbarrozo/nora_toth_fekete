@@ -103,10 +103,10 @@
 			</div>
 		{/each}
 	</div>
-	<div>
+	<div class="w-96 md:w-auto">
 		<h2 class="pb-4 text-2xl">{m.subscribe_newsletter()}</h2>
 
-		<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-full border p-4 sm:w-sm">
+		<fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-auto border p-4 sm:w-sm">
 			<legend class="fieldset-legend">Options</legend>
 			<label class="label mb-4 text-lg">
 				<input type="checkbox" bind:checked={postForm.updates} class="checkbox" />

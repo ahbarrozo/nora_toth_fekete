@@ -276,13 +276,13 @@
 	</div>
 	<h2 class="text-xl">{dateString}</h2>
 	<label for="title" class="input w-auto text-xl">
-		<input type="input" class="input input-lg" placeholder="Título" bind:value={postForm.title} />
+		<input type="input" class="input input-lg" placeholder="Title" bind:value={postForm.title} />
 	</label>
 	<label for="subtitle" class="input w-auto text-xl">
 		<input
 			type="input"
 			class="input input-lg"
-			placeholder="Subtítulo"
+			placeholder="Subtitle"
 			bind:value={postForm.subtitle}
 		/>
 	</label>

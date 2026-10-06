@@ -209,6 +209,25 @@ export const actions: Actions = {
             return fail(500, { success: false, error });
         }
     },
+    saveCover: async ({ request, fetch }) => {
+        try {
+            const formData = await request.formData();
+
+
+            const response = await fetch(PUBLIC_API_ENDPOINT + 'covers', {
+                method: 'POST',
+                body: formData,
+            });
+            const result = await response.json();
+
+            if (result.error)
+                // @ts-ignore
+                return fail(500, `Internal server error: ${result.error}`)
+            return { success: true, data: result };
+        } catch (error) {
+            return fail(500, { success: false, error });
+        }
+    },
     saveEvent: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
@@ -321,24 +340,6 @@ export const actions: Actions = {
             return fail(500, { success: false, error });
         }
     },
-    updateWork: async ({ request, fetch }) => {
-        try {
-            const formData = await request.formData();
-
-            const id = formData.get('id');
-            const response = await fetch(PUBLIC_API_ENDPOINT + `works/${id}`, {
-                method: 'PUT',
-                body: formData,
-            });
-            const result = await response.json();
-            if (result.error)
-                // @ts-ignore
-                return fail(500, `Internal server error: ${result.error}`)
-            return { success: true, data: result };
-        } catch (error) {
-            return fail(500, { success: false, error });
-        }
-    },
     updateBlogPost: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
@@ -375,6 +376,25 @@ export const actions: Actions = {
             return fail(500, { success: false, error });
         }
     },
+    updateCover: async ({ request, fetch }) => {
+        try {
+            const formData = await request.formData();
+
+            const id = formData.get('id');
+            const response = await fetch(PUBLIC_API_ENDPOINT + `covers/${id}`, {
+                method: 'PUT',
+                body: formData,
+            });
+            const result = await response.json();
+            if (result.error)
+                // @ts-ignore
+                return fail(500, `Internal server error: ${result.error}`)
+            return { success: true, data: result };
+        } catch (error) {
+            return fail(500, { success: false, error });
+        }
+    },
+
     updateEvent: async ({ request, fetch }) => {
         try {
             const formData = await request.formData();
@@ -411,6 +431,25 @@ export const actions: Actions = {
             return fail(500, { success: false, error });
         }
     },
+    updateWork: async ({ request, fetch }) => {
+        try {
+            const formData = await request.formData();
+
+            const id = formData.get('id');
+            const response = await fetch(PUBLIC_API_ENDPOINT + `works/${id}`, {
+                method: 'PUT',
+                body: formData,
+            });
+            const result = await response.json();
+            if (result.error)
+                // @ts-ignore
+                return fail(500, `Internal server error: ${result.error}`)
+            return { success: true, data: result };
+        } catch (error) {
+            return fail(500, { success: false, error });
+        }
+    },
+
     uploadAudio: async ({ request }) => {
         try {
             const formData = await request.formData();
@@ -486,6 +525,7 @@ export const load: ServerLoad = async ({ fetch }): Promise<PageData> => {
             'blog_posts',
             'blog_post_types',
             'contacts',
+            'covers',
             'events',
             'social_media',
             'works'
@@ -524,7 +564,8 @@ export const load: ServerLoad = async ({ fetch }): Promise<PageData> => {
         apiData['events'].push(...calendarEvents)
 
         return {
-            apiData
+            apiData,
+            coverImg: apiData['covers']  && apiData['covers'].length > 0 ? apiData['covers'][0] : { path: ''}
         };
     } catch (error) {
         console.error('Error fetching data:', error);

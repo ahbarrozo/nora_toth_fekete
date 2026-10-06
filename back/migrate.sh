@@ -8,9 +8,9 @@
 # 3b - Run if not executed
 set -e  # Exit immediately if a command exits with a non-zero status
 
-DB_USER=""
-DB_NAME=""
-DB_HOST=""
+DB_USER="nora_toth_fekete"
+DB_NAME="nora_toth_fekete"
+DB_HOST="localhost"
 
 # Prompt for password (input will be hidden)
 read -sp "Enter PostgreSQL password for $DB_USER : " PGPASSWORD

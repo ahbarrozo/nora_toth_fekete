@@ -1,8 +1,10 @@
 import { fail, redirect, type Actions, type ServerLoad } from '@sveltejs/kit';
 import type { ApiData, PageData } from 'src/types/PageData.types';
+import type { Image } from 'src/types/Image.types';
 import { getLocale } from 'src/paraglide/runtime';
 
 import { PUBLIC_API_ENDPOINT } from '$env/static/public';
+import { isEmpty } from 'src/common/dataParsing';
 
 type DataTableName = keyof ApiData;
 
@@ -67,6 +69,7 @@ export const load: ServerLoad = async ({ fetch }): Promise<PageData> => {
             'blog_post_types',
             'blog_comments',
             'contacts',
+            'covers',
             'events',
             'social_media',
             'works'
@@ -94,8 +97,11 @@ export const load: ServerLoad = async ({ fetch }): Promise<PageData> => {
             acc[table] = results[i];
             return acc;
         }, {} as ApiData);
+
+        const coverImg: Image = apiData.covers.length === 0 ? { path: '' } : apiData.covers[0];
         return {
-            apiData
+            apiData,
+            coverImg
         };
     } catch (error) {
         console.error('Error fetching data:', error);

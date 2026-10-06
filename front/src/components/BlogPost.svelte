@@ -7,6 +7,8 @@
 	import AudioPlayer from './AudioPlayer.svelte';
 	import { orderByDate } from 'src/common/dataParsing';
 
+    import { onMount, tick } from 'svelte';
+
 	const {
 		id,
 		color,
@@ -99,9 +101,30 @@
 
 		return true;
 	}
+
+
+    async function openFromHash(hash: string) {
+        if ( hash != `#post-${id}` ) return;
+
+        await tick();
+
+        showModal();
+    }
+    
+    onMount(() => {
+        openFromHash(window.location.hash);
+
+		window.addEventListener('hashchange', openFromHash);
+
+		return () => {
+			window.removeEventListener('hashchange', openFromHash);
+		};
+    })
+
+
 </script>
 
-<div class={`flex-none ${isFirst ? 'w-full' : 'w-96 2xl:w-md'}`}>
+<div id={`post-${id}`} class={`flex-none ${isFirst ? 'w-full' : 'w-96 2xl:w-[31.25%]'}`}>
 	{#if !isFirst}
 		<div class="card h-150 shadow-sm">
 			<figure>
@@ -117,9 +140,9 @@
 				<h2 class="card-title text-3xl">{title}</h2>
 				<div class="flex flex-row items-center justify-between">
 					<span class=" text-xl">{subtitle}</span>
-					<div class="badge" style={`background-color: ${color};`}>{typeLabel(type)}</div>
+					<div class="badge badge-xl" style={`background-color: ${color};`}>{typeLabel(type)}</div>
 				</div>
-				<p class="mb-4 text-lg">
+				<p class="mb-4 text-lg py-16">
 					{@html truncatedHTML()}
 				</p>
 				<div class="card-actions justify-between">
@@ -129,8 +152,8 @@
 			</div>
 		</div>
 	{:else}
-		<div class="hero">
-			<div class="hero-content max-w-fit flex-col lg:flex-row">
+		<div class="hero shadow-sm">
+			<div class="hero-content max-w-[95%] flex-col lg:flex-row">
 				{#if images && images.length > 0}
 					<!-- svelte-ignore a11y_img_redundant_alt -->
 					<img
@@ -146,11 +169,11 @@
 						<h1 class="text-2xl sm:text-5xl">{title}</h1>
 						<div class="flex flex-row justify-between">
 							<span class=" sm:text-2xl">{subtitle}</span>
-							<div class="badge" style={`background-color: ${color};`}>
+							<div class="badge badge-xl" style={`background-color: ${color};`}>
 								{typeLabel(type)}
 							</div>
 						</div>
-						<div class="truncate py-4 text-xl">
+						<div class="truncate py-16 text-xl">
 							{@html truncatedHTML(150)}
 						</div>
 					</div>

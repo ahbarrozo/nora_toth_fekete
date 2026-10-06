@@ -110,7 +110,7 @@
 				type="input"
 				class="input input-lg"
 				bind:value={postFormData.name}
-				placeholder="Título"
+				placeholder="Title"
 			/>
 		</label>
 		<label for="contact" class="input w-[30vw] text-xl">
@@ -118,7 +118,7 @@
 				type="input"
 				class="input input-lg"
 				bind:value={postFormData.contact}
-				placeholder="Responsável"
+				placeholder="Person in charge"
 			/>
 		</label>
 		<label for="mail" class="input w-[28.66vw] text-xl">
@@ -134,7 +134,7 @@
 				type="input"
 				class="input input-lg"
 				bind:value={postFormData.phone}
-				placeholder="Telefone"
+				placeholder="Phone number"
 			/>
 		</label>
 	</div>
