@@ -203,8 +203,6 @@ works.put('/:id', authGuard, async (c) => {
 			[id]
 		);
 
-		console.log({ worksImagesResults })
-
 		// separating between images to be deleted and upserted
 		const imagesToDelete = worksImagesResults.rows.filter(
 			(im) => !images.map((i) => i.id).includes(im.image_id)
