@@ -7,8 +7,10 @@ node_modules
 .wrangler
 /.svelte-kit
 /build
+/static/audios/*
 /static/documents/*
 /static/images/*
+/data/
 package-lock.json
 
 # OS
