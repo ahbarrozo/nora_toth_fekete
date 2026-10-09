@@ -33,12 +33,12 @@
 	}
 </script>
 
-<div class="hero bg-base-200 xl:w-7/15 mb-10 w-[95vw] rounded-2xl">
+<div class="hero bg-base-200 xl:w-[45%] mb-10 rounded-2xl">
 	<div class="hero-content flex-col sm:flex-row">
 		{#if images.length > 0}
 			<img
 				src={images[0].path}
-				alt={'Capa da works ' + title}
+				alt={'Cover from work ' + title}
 				class="ml-4 mr-4
                         h-80 w-80 overflow-hidden
                         rounded-lg object-cover object-top shadow-2xl sm:mr-10"
