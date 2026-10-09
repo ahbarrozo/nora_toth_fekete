@@ -15,8 +15,8 @@
 
 	const { blogPosts, blogComments, blogPostTypes }: BlogProps = $props();
 	let currentPage = $state(1);
-	let posts = $state(blogPosts);
-	let postTypes = $state(blogPostTypes.map((t) => t.name));
+	let posts = $derived(blogPosts);
+	let postTypes = $derived(blogPostTypes.map((t) => t.name));
 
 	let comments = $derived(
 		blogComments.reduce((map: Map<number, BlogCommentProps[]>, c: BlogCommentProps) => {
@@ -94,6 +94,7 @@
 			{...newestPost}
 			color={typeColor(newestPost.type)}
 			comments={comments.get(newestPost.id) ?? []}
+            page={currentPage}
 		></BlogPost>
 	{/if}
 	{#each displayedPosts as post}

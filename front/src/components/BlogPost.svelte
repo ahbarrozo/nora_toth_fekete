@@ -1,6 +1,8 @@
 <script lang="ts">
 	import * as m from 'src/paraglide/messages';
-	import { PUBLIC_LOCALE } from '$env/static/public';
+    import { ShareSolid } from 'svelte-awesome-icons';
+
+	import { PUBLIC_LOCALE, PUBLIC_API_ENDPOINT } from '$env/static/public';
 	import { type BlogPostProps } from 'src/types/BlogPost.types';
 	import BlogComments from './BlogComments.svelte';
 	import type { BlogCommentProps } from 'src/types/BlogComment.types';
@@ -21,11 +23,12 @@
 		title,
 		type,
 		isFirst,
-		comments
-	}: BlogPostProps & { comments: BlogCommentProps[] } = $props();
+		comments,
+        page
+	}: BlogPostProps & { comments: BlogCommentProps[] } & { page: Number } = $props();
 
-	let blogComments: BlogCommentProps[] = $state(orderByDate(comments, 'date'));
-
+	let blogComments: BlogCommentProps[] = $derived(orderByDate(comments, 'date'));
+    let displayTooltip: boolean = $state(false);
 	let modal: HTMLDialogElement;
 
 	const dateFormat = new Intl.DateTimeFormat(PUBLIC_LOCALE, {
@@ -34,6 +37,12 @@
 		year: 'numeric'
 	});
 	const dateString = $derived(dateFormat.format(new Date(date)));
+
+    async function copyLink() {
+        toggleTooltip() 
+        await navigator.clipboard.writeText(PUBLIC_API_ENDPOINT.slice(0,-5) + '#post-' + id + '-' + page);
+        setTimeout(toggleTooltip, 1000)
+    }
 
 	function downloadDocument(path: string) {
 		try {
@@ -74,6 +83,10 @@
 		if (modal) modal.showModal();
 	}
 
+    function toggleTooltip() {
+        displayTooltip = !displayTooltip;
+    }
+
 	function typeLabel(postType: string | null) {
 		if (postType)
 			// @ts-ignore
@@ -104,7 +117,7 @@
 
 
     async function openFromHash(hash: string) {
-        if ( hash != `#post-${id}` ) return;
+        if ( hash != `#post-${id}-${page}` ) return;
 
         await tick();
 
@@ -124,7 +137,7 @@
 
 </script>
 
-<div id={`post-${id}`} class={`flex-none ${isFirst ? 'w-full' : 'w-96 2xl:w-[31.25%]'}`}>
+<div id={`post-${id}-${page}`} class={`flex-none ${isFirst ? 'w-full' : 'w-96 2xl:w-[31.25%]'}`}>
 	{#if !isFirst}
 		<div class="card h-150 shadow-sm">
 			<figure>
@@ -146,7 +159,14 @@
 					{@html truncatedHTML()}
 				</p>
 				<div class="card-actions justify-between">
-					<button class="btn btn-primary" onclick={showModal}>{m.see_more()}</button>
+                    <div class="flex gap-2">
+					    <button class="btn btn-primary" onclick={showModal}>{m.see_more()}</button>
+                        <div class={displayTooltip ? "tooltip" : ""} data-tip="Copied!">
+                            <button class="btn btn-primary" onclick={copyLink}>
+    		                    <ShareSolid />
+                            </button>
+                        </div>
+                    </div>
 					<span class=" mt-4 text-sm">{dateString}</span>
 				</div>
 			</div>
@@ -178,7 +198,14 @@
 						</div>
 					</div>
 					<div class="card-actions absolute bottom-0 w-full justify-between">
-						<button class="btn btn-primary" onclick={showModal}>{m.see_more()}</button>
+                        <div class="flex gap-2">
+                            <button class="btn btn-primary" onclick={showModal}>{m.see_more()}</button>
+                            <div class={displayTooltip ? "tooltip" : ""} data-tip="Copied!">
+                                <button class="btn btn-primary" onclick={copyLink}>
+				                    <ShareSolid />
+                                </button>
+                            </div>
+                        </div>
 						<span class=" mt-4 text-sm">{dateString}</span>
 					</div>
 				</div>
