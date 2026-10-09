@@ -21,7 +21,7 @@ covers.get('/', async (c) => {
 	try {
 		const result = await pool.query(`
             SELECT 
-                id, title, path, locale    
+                id, title, path, description, locale    
             FROM 
                 covers 
 			${whereClause};
@@ -105,10 +105,10 @@ covers.put('/:id', authGuard, async (c) => {
             UPDATE 
                 covers 
             SET 
-                path = $1, title = $2, locale = $3 
+                path = $1, title = $2, locale = $3, description = $4
             WHERE 
-                id = $4;`,
-			[image.path, image.title, image.locale, id]
+                id = $5;`,
+			[image.path, image.title, image.locale, image.description, id]
 		);
 		return c.json({ message: `Cover ${id} updated successfully` }, 200);
 	} catch (error) {
