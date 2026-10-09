@@ -3,7 +3,7 @@
 </script>
 
 <div class="h-220 overflow-hidden">
-<div class="relative flex justify-center opacity-40">
+<div class="relative flex justify-center opacity-60">
     {#if coverImg && coverImg.path}
             <img src={coverImg.path} 
                  alt="Website Cover"
@@ -14,7 +14,7 @@
 <div class="absolute top-[400px] 
             left-[-200px] md:left-[-250px] 
             lg:left-[-150px] xl:left-[-100px]
-            2xl:left-[1500px]">
+            2xl:left-[1250px]">
     <h2 class="text-[120px] text-nowrap">Nora's Keez</h2>
     <p class="subheading">Maybe a phrase to be added here ?</p>
 </div>
