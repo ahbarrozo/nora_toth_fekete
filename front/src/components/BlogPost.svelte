@@ -172,7 +172,7 @@
 			</div>
 		</div>
 	{:else}
-		<div class="hero shadow-sm">
+		<div class="hero shadow-sm w-[97%]">
 			<div class="hero-content max-w-[95%] flex-col lg:flex-row">
 				{#if images && images.length > 0}
 					<!-- svelte-ignore a11y_img_redundant_alt -->
