@@ -16,7 +16,7 @@
 	}: Image & { isNew?: boolean; onDelete: Function }  = $props();
 
 	let modal: HTMLDialogElement;
-	let postForm = $state({
+	let postForm = $derived({
 		description,
 		locale,
         path,
@@ -61,7 +61,7 @@
 		const coverFormData = new FormData();
 		const body: Image = {
 			id, // include only if it exists
-			description,
+			description: postForm.description,
 			locale: postForm.locale,
             path: postForm.path,
 			title: postForm.title,

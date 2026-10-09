@@ -13,7 +13,7 @@
 	};
 	let newCoverId = $state(0);
 
-	let coversList = $state(covers);
+	let coversList = $derived(covers);
 
     function displayNewCover() {
 		newCoverId++;
