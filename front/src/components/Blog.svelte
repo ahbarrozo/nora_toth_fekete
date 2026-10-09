@@ -4,6 +4,7 @@
 	import { type BlogPostProps } from '../types/BlogPost.types';
 	import type { BlogCommentProps } from 'src/types/BlogComment.types';
 	import type { BlogPostType } from 'src/types/BlogPostType.types';
+	import { onMount, tick } from 'svelte';
 
 	interface BlogProps {
 		blogPosts: BlogPostProps[];
@@ -58,6 +59,32 @@
 
 		return blogType ? blogType.color : 'oklch(27% 0.006 286.033)';
 	}
+
+    async function openFromHash(hash: string) {
+        if (!hash.includes('#post')) return;
+
+        const pageNumberMatch = hash.match(/\d+$/);
+
+        if (!pageNumberMatch) return;
+
+        const pageNumber = pageNumberMatch[0];
+        const pageButton = document.getElementById('page' + pageNumber);
+        
+        if (pageButton)
+            pageButton.click();
+
+        await tick();
+    }
+    
+    onMount(() => {
+        openFromHash(window.location.hash);
+
+		window.addEventListener('hashchange', openFromHash);
+
+		return () => {
+			window.removeEventListener('hashchange', openFromHash);
+		};
+    })
 </script>
 
 <div class="flex flex-row gap-2">
